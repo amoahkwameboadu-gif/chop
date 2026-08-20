@@ -667,7 +667,7 @@
     .form-group textarea { resize: vertical; min-height: 70px; }
     .cart-footer {
       padding: 1rem 1.5rem; border-top: 1px solid rgba(39,4,4,0.08);
-      flex-shrink: 0; background: #fff;
+      flex-shrink: 0; background: #fff; position: sticky; bottom: 0; z-index: 2;
     }
     .btn-whatsapp-order {
       width: 100%;
@@ -1046,6 +1046,7 @@
 
       /* === STICKY CART BAR MOBILE === */
       #cart-bar { padding: 0.7rem 0.8rem; }
+      #cart-bar.visible { padding-bottom: calc(0.7rem + env(safe-area-inset-bottom)); z-index: 1400; }
       .cart-bar-info { gap: 0.5rem; }
       .cart-bar-icon { width: 36px; height: 36px; border-radius: 10px; font-size: 0.9rem; }
       .btn-checkout-bar { padding: 7px 12px; font-size: 0.7rem; }
@@ -1691,92 +1692,31 @@
   </div>
 </div>
 
-<!-- ===== PAYMENT MODAL (MTN MoMo / Telecel — Jumia Style) ===== -->
+<!-- ===== SECURE HUBTEL PAYMENT HANDOFF ===== -->
 <div class="modal-overlay" id="paymentModal">
   <div class="pay-modal-box">
-    <!-- Top brand bar -->
-    <div class="pay-top-bar" id="payBrandBg"></div>
     <button class="pay-close-btn" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
-
-    <!-- Header -->
     <div class="pay-header">
-      <span class="pay-brand-icon" id="payBrandIcon">M</span>
-      <span class="pay-brand-name" id="payBrandName">MTN Mobile Money</span>
+      <span class="pay-brand-icon" style="background:#ffb000;color:#270404"><i class="fas fa-lock"></i></span>
+      <span class="pay-brand-name">Secure Hubtel payment</span>
       <span class="pay-brand-badge">SECURE</span>
     </div>
-
-    <!-- Amount -->
     <div class="pay-amount-card">
       <div class="pay-amount-label">YOU ARE PAYING</div>
       <div class="pay-amount-value" id="payAmount">GH₵0.00</div>
       <div class="pay-amount-detail">
-        <span>To <strong id="payRecipientName">Chop Ghana</strong></span>
-        <span class="pay-amount-dot">·</span>
-        <span id="payRecipient">055 461 1569</span>
+        <span>Chop Ghana</span>
       </div>
       <div class="pay-ref">Ref: <strong id="payReference">#CHOP-0000</strong></div>
     </div>
-
-    <!-- === STEP 1: Phone Number === -->
-    <div class="pay-step" id="payStep1">
-      <div class="pay-step-title"><span class="pay-step-num">1</span> Enter your Mobile Money number</div>
-      <div class="pay-input-wrap">
-        <span class="pay-input-prefix">+233</span>
-        <input type="tel" id="payPhone" class="pay-input pay-num-input" placeholder="55 123 4567" inputmode="numeric" maxlength="15" />
-      </div>
-      <div class="pay-step-hint">Enter the phone number linked to your <span id="payProviderHint">MTN MoMo</span> account</div>
-    </div>
-
-    <!-- === STEP 2: MoMo PIN (like dialing *170#) === -->
-    <div class="pay-step" id="payStep2" style="display:none">
+    <div class="pay-step" style="display:block;padding:0 1.2rem 1rem;text-align:center">
       <div class="pay-momo-notice">
         <div class="pay-momo-icon"><i class="fas fa-mobile-alt"></i></div>
-        <div class="pay-momo-text">Dial <strong>*170#</strong> or open your MoMo app to confirm. Enter your 4-digit MoMo PIN below to send money from your wallet.</div>
+        <div class="pay-momo-text">Hubtel will open the secure payment page. Confirm on your phone using your normal MoMo app or PIN. Chop never sees your PIN.</div>
       </div>
-      <div class="pay-step-title" style="margin-top:0.8rem"><span class="pay-step-num">2</span> Enter MoMo PIN to send money</div>
-      <div class="pay-pin-grid">
-        <input type="password" id="payPin0" class="pay-pin-cell" maxlength="1" inputmode="numeric" />
-        <input type="password" id="payPin1" class="pay-pin-cell" maxlength="1" inputmode="numeric" />
-        <input type="password" id="payPin2" class="pay-pin-cell" maxlength="1" inputmode="numeric" />
-        <input type="password" id="payPin3" class="pay-pin-cell" maxlength="1" inputmode="numeric" />
-      </div>
-      <div class="pay-pin-hint">This is the same PIN you use to send money on your phone</div>
+      <button class="pay-action-btn" onclick="startHubtelPayment()"><span>Continue to Hubtel</span> <i class="fas fa-arrow-right"></i></button>
     </div>
-
-    <!-- === PROCESSING === -->
-    <div class="pay-step pay-processing" id="payProcessing" style="display:none">
-      <div class="pay-spinner-wrap">
-        <div class="pay-spinner"></div>
-        <div class="pay-bank-icons">
-          <span id="payProcBrand">MTN</span>
-          <i class="fas fa-exchange-alt"></i>
-          <span>CHOP</span>
-        </div>
-      </div>
-      <div class="pay-processing-text">Authorizing payment...</div>
-      <div class="pay-processing-sub">Please wait — do not close this page</div>
-    </div>
-
-    <!-- === RESULT === -->
-    <div class="pay-step pay-result" id="payResult" style="display:none">
-      <div class="pay-result-icon" id="payResultIcon"></div>
-      <div class="pay-result-title" id="payResultTitle"></div>
-      <div class="pay-result-msg" id="payResultMsg"></div>
-    </div>
-
-    <div class="pay-status" id="payStatusMsg"></div>
-
-    <!-- Buttons -->
-    <div class="pay-btn-row">
-      <button class="pay-action-btn" id="payBtn" onclick="payBtnAction()">
-        <span id="payBtnText">Continue</span> <i class="fas fa-arrow-right"></i>
-      </button>
-
-    </div>
-
-    <div class="pay-footer-text">
-      <i class="fas fa-lock"></i> Secured by <span id="payBrandShort">MTN MoMo</span> &nbsp;|&nbsp; Pay to Chop Ghana — <span id="payFooterNum">055 461 1569</span>
-    </div>
+    <div class="pay-footer-text"><i class="fas fa-lock"></i> Your PIN stays with your mobile-money network</div>
   </div>
 </div>
 
@@ -2399,8 +2339,7 @@ function handleCartAction() {
 //  CONFIG — Set your keys here
 // ============================================================
 // CLOUDFLARE WORKER: paste the deployed Worker URL here after deployment.
-const HUBTEL_WORKER_URL = '
-choptastethevibe.choptastethevibep3.workers.dev';
+const HUBTEL_WORKER_URL = 'https://choptastethevibe.choptastethevibep3.workers.dev';
 
 // FORMSPREE: Order emails sent here (free, 50/month)
 const FORMSPREE_ID = 'mqenrbey';
@@ -2424,36 +2363,10 @@ async function openPaymentModal() {
   localStorage.setItem('pendingOrderId', orderId);
   localStorage.setItem('pendingTotal', total);
 
-  // Hubtel Checkout keeps payment credentials on the Cloudflare Worker.
-  if (HUBTEL_WORKER_URL && HUBTEL_WORKER_URL.indexOf('PASTE_') !== 0) {
-    closeCart();
-    showGlobalLoading('Connecting to Hubtel...');
-    try {
-      const response = await fetch(`${HUBTEL_WORKER_URL}/create-payment`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reference: orderId,
-          amount: total,
-          name,
-          phone,
-          email,
-          address: localStorage.getItem('custAddress') || '',
-          city: localStorage.getItem('custCity') || 'Elmina',
-          notes: localStorage.getItem('custNotes') || '',
-          paymentMethod: payMethod
-        })
-      });
-      const result = await response.json();
-      if (!response.ok || !result.checkoutUrl) throw new Error(result.error || 'Unable to start Hubtel checkout');
-      window.location.href = result.checkoutUrl;
-    } catch (error) {
-      hideGlobalLoading();
-      showToast(error.message || 'Unable to connect to Hubtel. Please try again.');
-    }
-    return;
-  }
-  showToast('Hubtel is not connected yet. Paste your Cloudflare Worker URL in the payment settings.');
+  document.getElementById('payAmount').textContent = `GH₵${total.toFixed(2)}`;
+  document.getElementById('payReference').textContent = orderId;
+  document.getElementById('paymentModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
 }
 
 function closePaymentModal() {
@@ -2461,60 +2374,38 @@ function closePaymentModal() {
   document.body.style.overflow = '';
 }
 
-// Step 1 → Step 2: Validate phone, show PIN input
-function payStepToPin() {
-  const phone = document.getElementById('payPhone').value.replace(/\s+/g, '');
-  if (!phone || phone.length < 9) {
-    document.getElementById('payStatusMsg').textContent = 'Please enter a valid mobile money number';
-    document.getElementById('payStatusMsg').className = 'pay-status';
+async function startHubtelPayment() {
+  if (!HUBTEL_WORKER_URL) {
+    showToast('Hubtel is not connected yet.');
     return;
   }
-  document.getElementById('payStatusMsg').textContent = '';
-  document.getElementById('payStatusMsg').className = 'pay-status';
-  document.getElementById('payStep1').style.display = 'none';
-  document.getElementById('payStep2').style.display = 'block';
-  document.getElementById('payBtnText').textContent = 'Send Money';
-  // Auto-focus first PIN cell
-  setTimeout(() => { const p0 = document.getElementById('payPin0'); if (p0) p0.focus(); }, 300);
-}
-
-// Read 4 PIN cells & process
-function getPinFromCells() {
-  let pin = '';
-  for (let i = 0; i < 4; i++) {
-    const cell = document.getElementById('payPin' + i);
-    pin += (cell ? cell.value : '');
+  const orderId = localStorage.getItem('pendingOrderId');
+  const phone = localStorage.getItem('custPhone') || '';
+  closePaymentModal();
+  showGlobalLoading('Opening secure payment...');
+  try {
+    const response = await fetch(`${HUBTEL_WORKER_URL}/create-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        reference: orderId,
+        amount: Number(localStorage.getItem('pendingTotal')),
+        name: localStorage.getItem('custName') || '',
+        phone,
+        email: localStorage.getItem('custEmail') || `${phone}@chopgh.com`,
+        address: localStorage.getItem('custAddress') || '',
+        city: localStorage.getItem('custCity') || 'Elmina',
+        notes: localStorage.getItem('custNotes') || '',
+        paymentMethod: localStorage.getItem('custPayMethod') || 'MTN'
+      })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.checkoutUrl) throw new Error(result.error || 'Unable to start Hubtel checkout');
+    window.location.href = result.checkoutUrl;
+  } catch (error) {
+    hideGlobalLoading();
+    showToast(error.message || 'Unable to connect to Hubtel. Please try again.');
   }
-  return pin;
-}
-
-function processPayment() {
-  const pin = getPinFromCells();
-  if (!pin || pin.length < 4) {
-    document.getElementById('payStatusMsg').textContent = 'Enter your 4-digit MoMo PIN';
-    document.getElementById('payStatusMsg').className = 'pay-status';
-    document.querySelectorAll('.pay-pin-cell').forEach(c => { c.style.borderColor = 'var(--red)'; setTimeout(() => { c.style.borderColor = ''; }, 600); });
-    return;
-  }
-  document.getElementById('payStep2').style.display = 'none';
-  document.getElementById('payProcessing').style.display = 'block';
-  document.getElementById('payBtn').style.display = 'none';
-  document.getElementById('payStatusMsg').textContent = '';
-
-  // Simulate MTN processing
-  setTimeout(() => {
-    document.getElementById('payProcessing').style.display = 'none';
-    document.getElementById('payResult').style.display = 'block';
-    document.getElementById('payResult').className = 'pay-result success';
-    document.getElementById('payResultIcon').innerHTML = '<i class="fas fa-check-circle"></i>';
-    document.getElementById('payResultTitle').textContent = 'Payment Sent!';
-    document.getElementById('payResultMsg').textContent = 'GH₵' + parseFloat(localStorage.getItem('pendingTotal')||0).toFixed(2) + ' sent from your wallet. Your order is confirmed.';
-    document.getElementById('payBtn').style.display = 'flex';
-    document.getElementById('payBtn').disabled = false;
-    document.getElementById('payBtnText').textContent = 'View Receipt →';
-
-    submitOrderAfterPayment();
-  }, 2000);
 }
 
 function submitOrderAfterPayment() {
@@ -2582,62 +2473,6 @@ function finalizeReceipt() {
   const total = parseFloat(localStorage.getItem('lastOrderTotal')) || getCartTotal() + (getCartTotal() >= 100 ? 0 : 5);
   showReceipt(orderId, total, name, phone, email, address, city, notes, payMethod);
 }
-
-function payBtnAction() {
-  const step1Visible = document.getElementById('payStep1').style.display !== 'none';
-  const resultVisible = document.getElementById('payResult').style.display !== 'none';
-
-  if (resultVisible) {
-    finalizeReceipt();
-  } else if (step1Visible) {
-    payStepToPin();
-  } else {
-    processPayment();
-  }
-}
-
-// === PIN CELL AUTO-ADVANCE (like Jumia / KiKUU) ===
-document.addEventListener('input', function(e) {
-  if (!e.target.classList.contains('pay-pin-cell')) return;
-  const val = e.target.value;
-  // Only allow digits
-  if (!/^\d$/.test(val)) { e.target.value = ''; return; }
-  e.target.classList.add('filled');
-  // Move to next cell
-  const idx = parseInt(e.target.id.replace('payPin', ''));
-  if (idx < 3) {
-    const next = document.getElementById('payPin' + (idx + 1));
-    if (next) next.focus();
-  }
-});
-document.addEventListener('keydown', function(e) {
-  if (!e.target.classList.contains('pay-pin-cell')) return;
-  if (e.key === 'Backspace' && e.target.value === '') {
-    e.target.classList.remove('filled');
-    const idx = parseInt(e.target.id.replace('payPin', ''));
-    if (idx > 0) {
-      const prev = document.getElementById('payPin' + (idx - 1));
-      if (prev) { prev.value = ''; prev.classList.remove('filled'); prev.focus(); }
-    }
-  }
-});
-document.addEventListener('paste', function(e) {
-  const activeEl = document.activeElement;
-  if (!activeEl || !activeEl.classList.contains('pay-pin-cell')) return;
-  e.preventDefault();
-  const paste = (e.clipboardData || window.clipboardData).getData('text');
-  const digits = paste.replace(/\D/g, '').slice(0, 4);
-  for (let i = 0; i < 4; i++) {
-    const cell = document.getElementById('payPin' + i);
-    if (cell) {
-      cell.value = digits[i] || '';
-      cell.classList.toggle('filled', !!digits[i]);
-    }
-  }
-  const lastFilled = Math.min(digits.length, 3);
-  const focusCell = document.getElementById('payPin' + lastFilled);
-  if (focusCell) focusCell.focus();
-});
 
 // ============================================================
 //  RECEIPT MODAL
