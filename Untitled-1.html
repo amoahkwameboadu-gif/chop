@@ -2403,6 +2403,9 @@ function handleCartAction() {
 // Uncomment and paste your key to accept real MTN Momo & Telecel payments:
 const PAYSTACK_PUBLIC_KEY = 'pk_test_4ee06a25c6fed7ee72d9f38a3e848981d2fb798b';
 
+// CLOUDFLARE WORKER: paste the deployed Worker URL here after deployment.
+const HUBTEL_WORKER_URL = '';
+
 // FORMSPREE: Order emails sent here (free, 50/month)
 const FORMSPREE_ID = 'mqenrbey';
 const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
@@ -2417,7 +2420,7 @@ const SHOP_NUMBER_TELECEL = '0509511619'; // Telecel Cash
 // ============================================================
 //  PAYMENT — Real Paystack MoMo OR SMS fallback
 // ============================================================
-function openPaymentModal() {
+async function openPaymentModal() {
   const payMethod = localStorage.getItem('custPayMethod') || 'MTN';
   const name = localStorage.getItem('custName') || '';
   const phone = localStorage.getItem('custPhone') || '';
@@ -2427,6 +2430,36 @@ function openPaymentModal() {
   const orderId = 'CHOP-' + Date.now().toString().slice(-6);
   localStorage.setItem('pendingOrderId', orderId);
   localStorage.setItem('pendingTotal', total);
+
+  // Hubtel Checkout keeps payment credentials on the Cloudflare Worker.
+  if (HUBTEL_WORKER_URL) {
+    closeCart();
+    showGlobalLoading('Connecting to Hubtel...');
+    try {
+      const response = await fetch(`${HUBTEL_WORKER_URL}/create-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reference: orderId,
+          amount: total,
+          name,
+          phone,
+          email,
+          address: localStorage.getItem('custAddress') || '',
+          city: localStorage.getItem('custCity') || 'Elmina',
+          notes: localStorage.getItem('custNotes') || '',
+          paymentMethod: payMethod
+        })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.checkoutUrl) throw new Error(result.error || 'Unable to start Hubtel checkout');
+      window.location.href = result.checkoutUrl;
+    } catch (error) {
+      hideGlobalLoading();
+      showToast(error.message || 'Unable to connect to Hubtel. Please try again.');
+    }
+    return;
+  }
 
   // === IF PAYSTACK KEY IS SET → USE REAL PAYSTACK ===
   if (PAYSTACK_PUBLIC_KEY && PAYSTACK_PUBLIC_KEY.length > 10) {
