@@ -11,7 +11,6 @@
   <title>Chop – Taste the Vibe</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://js.paystack.co/v1/inline.js"></script>
   <style>
     :root {
       --red: #FF0000;
@@ -2399,26 +2398,20 @@ function handleCartAction() {
 // ============================================================
 //  CONFIG — Set your keys here
 // ============================================================
-// PAYSTACK: Sign up free at paystack.com → Settings → API Keys → copy Public Key
-// Uncomment and paste your key to accept real MTN Momo & Telecel payments:
-const PAYSTACK_PUBLIC_KEY = 'pk_test_4ee06a25c6fed7ee72d9f38a3e848981d2fb798b';
-
 // CLOUDFLARE WORKER: paste the deployed Worker URL here after deployment.
-const HUBTEL_WORKER_URL = '';
+const HUBTEL_WORKER_URL = '
+choptastethevibe.choptastethevibep3.workers.dev';
 
 // FORMSPREE: Order emails sent here (free, 50/month)
 const FORMSPREE_ID = 'mqenrbey';
 const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
 
-// BUSINESS NUMBERS (for SMS fallback & confirmations)
+// BUSINESS NUMBERS (for confirmations)
 const SHOP_NUMBER_MTN = '0554611569';   // MTN Momo
 const SHOP_NUMBER_TELECEL = '0509511619'; // Telecel Cash
 
 // ============================================================
-//  PAYMENT MODAL — MTN Momo / Telecel Cash simulation
-// ============================================================
-// ============================================================
-//  PAYMENT — Real Paystack MoMo OR SMS fallback
+//  PAYMENT — Hubtel Checkout
 // ============================================================
 async function openPaymentModal() {
   const payMethod = localStorage.getItem('custPayMethod') || 'MTN';
@@ -2432,7 +2425,7 @@ async function openPaymentModal() {
   localStorage.setItem('pendingTotal', total);
 
   // Hubtel Checkout keeps payment credentials on the Cloudflare Worker.
-  if (HUBTEL_WORKER_URL) {
+  if (HUBTEL_WORKER_URL && HUBTEL_WORKER_URL.indexOf('PASTE_') !== 0) {
     closeCart();
     showGlobalLoading('Connecting to Hubtel...');
     try {
@@ -2460,79 +2453,7 @@ async function openPaymentModal() {
     }
     return;
   }
-
-  // === IF PAYSTACK KEY IS SET → USE REAL PAYSTACK ===
-  if (PAYSTACK_PUBLIC_KEY && PAYSTACK_PUBLIC_KEY.length > 10) {
-    closeCart();
-    const handler = PaystackPop.setup({
-      key: PAYSTACK_PUBLIC_KEY,
-      email: email,
-      amount: Math.round(total * 100), // Paystack uses pesewas
-      currency: 'GHS',
-      ref: orderId,
-      channels: ['mobile_money'],
-      mobile_money: {
-        phone: phone.replace(/\s+/g, '').replace(/^0/, '233'),
-        provider: payMethod === 'MTN' ? 'mtn' : 'tgo'
-      },
-      metadata: {
-        custom_fields: [
-          { display_name: 'Customer Name', variable_name: 'customer_name', value: name },
-          { display_name: 'Phone', variable_name: 'phone', value: phone },
-          { display_name: 'Payment Method', variable_name: 'payment_method', value: payMethod }
-        ]
-      },
-      callback: function(response) {
-        // Payment successful!
-        submitOrderAfterPayment();
-        showReceipt(orderId, total, name, phone, email, localStorage.getItem('custAddress')||'', localStorage.getItem('custCity')||'Elmina', localStorage.getItem('custNotes')||'', payMethod);
-      },
-      onClose: function() {
-        showToast('Payment cancelled. Try again when ready.');
-      }
-    });
-    handler.openIframe();
-    return;
-  }
-
-  // === FALLBACK: SMS payment instructions ===
-  const isMTN = payMethod === 'MTN';
-  const brandColor = isMTN ? '#FFCC00' : '#E31235';
-  const brandName = isMTN ? 'MTN Mobile Money' : 'Telecel Cash';
-  const brandShort = isMTN ? 'MTN MoMo' : 'Telecel Cash';
-  const brandIcon = isMTN ? 'M' : 'TC';
-  const brandIconColor = isMTN ? '#000' : '#fff';
-  const payToNum = isMTN ? '055 461 1569' : '050 951 1619';
-
-  document.getElementById('payBrandBg').style.background = brandColor;
-  document.getElementById('payBrandName').textContent = brandName;
-  document.getElementById('payBrandShort').textContent = brandShort;
-  document.getElementById('payBrandIcon').textContent = brandIcon;
-  document.getElementById('payBrandIcon').style.color = brandIconColor;
-  document.getElementById('payAmount').textContent = `GH₵${total.toFixed(2)}`;
-  document.getElementById('payReference').textContent = orderId;
-  document.getElementById('payRecipient').textContent = payToNum;
-  document.getElementById('payRecipientName').textContent = 'Chop Ghana';
-  document.getElementById('payFooterNum').textContent = payToNum;
-  document.getElementById('payProviderHint').textContent = brandShort;
-  document.getElementById('payProcBrand').textContent = isMTN ? 'MTN' : 'TCL';
-
-  // Reset PIN fields
-  document.getElementById('payPhone').value = phone;
-  ['payPin0','payPin1','payPin2','payPin3'].forEach(id => { document.getElementById(id).value = ''; document.getElementById(id).className = 'pay-pin-cell'; });
-  document.getElementById('payStatusMsg').textContent = '';
-  document.getElementById('payStatusMsg').className = 'pay-status';
-  document.getElementById('payStep1').style.display = 'block';
-  document.getElementById('payStep2').style.display = 'none';
-  document.getElementById('payProcessing').style.display = 'none';
-  document.getElementById('payResult').style.display = 'none';
-  document.getElementById('payBtn').style.display = 'flex';
-  document.getElementById('payBtn').disabled = false;
-  document.getElementById('payBtnText').textContent = 'Continue';
-
-  document.getElementById('paymentModal').classList.add('show');
-  document.body.style.overflow = 'hidden';
-  setTimeout(() => { const ph = document.getElementById('payPhone'); if (ph) ph.focus(); }, 400);
+  showToast('Hubtel is not connected yet. Paste your Cloudflare Worker URL in the payment settings.');
 }
 
 function closePaymentModal() {

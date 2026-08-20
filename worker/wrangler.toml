@@ -1,0 +1,11 @@
+name = "chop-hubtel"
+main = "src/index.js"
+compatibility_date = "2026-08-20"
+
+[vars]
+PUBLIC_SITE_URL = "https://YOUR-CLOUDFLARE-PAGES-DOMAIN"
+
+# Set secrets with:
+# npx wrangler secret put HUBTEL_CLIENT_ID
+# npx wrangler secret put HUBTEL_CLIENT_SECRET
+# npx wrangler secret put HUBTEL_MERCHANT_ACCOUNT
