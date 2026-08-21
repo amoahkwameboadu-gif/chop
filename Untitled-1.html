@@ -1355,7 +1355,7 @@
     </button>
     <div class="drawer-contact">
       <div style="color:var(--amber);font-weight:700;margin-bottom:6px">📍 Elmina, Ghana</div>
-      055 461 1569 · 059 335 3204<br>053 832 5214
+      055 461 1569<br>053 832 5214
     </div>
   </div>
 </nav>
@@ -1429,7 +1429,7 @@
     </div>
     <div class="hero-image-wrapper">
       <div class="hero-glow"></div>
-      <img src="https://i.ibb.co/LXy8qC9J/springrolls.jpg" alt="Chop Spring Rolls" class="hero-food-img" />
+      <img src="chopspring%20rolls%20%20label.png" alt="Chop Spring Rolls" class="hero-food-img" />
       <div class="hero-floating-badge top-right">🔥 Selling Now<br><small style="font-size:0.7rem;font-weight:600;color:rgba(39,4,4,0.7)">Spring Rolls</small></div>
       <div class="hero-floating-badge bottom-left">⚡ Free Delivery<br><small style="font-size:0.7rem;font-weight:600;color:rgba(39,4,4,0.7)">Orders over GH₵100</small></div>
     </div>
@@ -1528,11 +1528,11 @@
         <p>Chat with us on WhatsApp for quick orders and inquiries</p>
         <p style="color:#25D366;font-weight:700;font-size:0.82rem;margin-top:0.5rem">055 461 1569</p>
       </div>
-      <div class="contact-card" onclick="window.open('tel:+233593353204')">
+      <div class="contact-card" onclick="window.open('tel:+233538325214')">
         <div class="contact-card-icon red"><i class="fas fa-phone-alt"></i></div>
         <h4>Call Us</h4>
         <p>Reach us directly on any of our lines for support</p>
-        <p style="color:var(--red);font-weight:700;font-size:0.82rem;margin-top:0.5rem">059 335 3204 · 053 832 5214</p>
+        <p style="color:var(--red);font-weight:700;font-size:0.82rem;margin-top:0.5rem">053 832 5214</p>
       </div>
       <div class="contact-card" onclick="document.getElementById('feedbackName').focus()">
         <div class="contact-card-icon amber"><i class="fas fa-envelope"></i></div>
@@ -1632,7 +1632,7 @@
           <div class="footer-contact-icon"><i class="fas fa-phone"></i></div>
           <div class="footer-contact-text">
             <strong>Phone Lines</strong>
-            059 335 3204<br>053 832 5214
+            053 832 5214
           </div>
         </div>
         <div class="footer-contact-item">
@@ -1689,34 +1689,6 @@
     <button class="btn-whatsapp-order" id="whatsappBtn" onclick="handleCartAction()">
       <i class="fas fa-arrow-right"></i> <span id="whatsappBtnText">Review Order</span>
     </button>
-  </div>
-</div>
-
-<!-- ===== SECURE HUBTEL PAYMENT HANDOFF ===== -->
-<div class="modal-overlay" id="paymentModal">
-  <div class="pay-modal-box">
-    <button class="pay-close-btn" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
-    <div class="pay-header">
-      <span class="pay-brand-icon" style="background:#ffb000;color:#270404"><i class="fas fa-lock"></i></span>
-      <span class="pay-brand-name">Secure Hubtel payment</span>
-      <span class="pay-brand-badge">SECURE</span>
-    </div>
-    <div class="pay-amount-card">
-      <div class="pay-amount-label">YOU ARE PAYING</div>
-      <div class="pay-amount-value" id="payAmount">GH₵0.00</div>
-      <div class="pay-amount-detail">
-        <span>Chop Ghana</span>
-      </div>
-      <div class="pay-ref">Ref: <strong id="payReference">#CHOP-0000</strong></div>
-    </div>
-    <div class="pay-step" style="display:block;padding:0 1.2rem 1rem;text-align:center">
-      <div class="pay-momo-notice">
-        <div class="pay-momo-icon"><i class="fas fa-mobile-alt"></i></div>
-        <div class="pay-momo-text">Hubtel will open the secure payment page. Confirm on your phone using your normal MoMo app or PIN. Chop never sees your PIN.</div>
-      </div>
-      <button class="pay-action-btn" onclick="startHubtelPayment()"><span>Continue to Hubtel</span> <i class="fas fa-arrow-right"></i></button>
-    </div>
-    <div class="pay-footer-text"><i class="fas fa-lock"></i> Your PIN stays with your mobile-money network</div>
   </div>
 </div>
 
@@ -2210,34 +2182,10 @@ function renderCartBody() {
             <option value="Cape Coast - Abura" ${localStorage.getItem('custCity')==='Cape Coast - Abura'?'selected':''}>Cape Coast – Abura</option>
           </select>
         </div>
-        <div class="form-section-title"><i class="fas fa-mobile-alt"></i>Payment Method</div>
-        <div style="display:flex;flex-direction:column;gap:0.7rem;margin-bottom:0.8rem">
-          <label style="display:flex;align-items:center;gap:0;cursor:pointer;border:2px solid rgba(39,4,4,0.1);border-radius:14px;overflow:hidden;transition:border-color 0.2s" id="mtnLabel">
-            <input type="radio" name="payMethod" id="payMTN" value="MTN" style="display:none" onchange="selectPayMethod('MTN')" ${localStorage.getItem('custPayMethod')==='MTN'?'checked':''} />
-            <div style="background:#FFCC00;padding:12px 14px;display:flex;align-items:center;justify-content:center;width:52px;flex-shrink:0">
-              <span style="font-size:1.1rem;font-weight:900;color:#000">M</span>
-            </div>
-            <div style="padding:10px 14px;flex:1">
-              <div style="font-weight:800;font-size:0.85rem;color:var(--dark)">MTN Mobile Money</div>
-              <div style="font-size:0.75rem;color:rgba(39,4,4,0.5);margin-top:1px">Send to: <strong style="color:var(--dark)">055 461 1569</strong></div>
-            </div>
-            <div style="padding:0 14px;font-size:1rem;color:var(--amber)" id="mtnCheck">${localStorage.getItem('custPayMethod')==='MTN'?'<i class="fas fa-check-circle" style="color:var(--amber)"></i>':''}</div>
-          </label>
-          <label style="display:flex;align-items:center;gap:0;cursor:pointer;border:2px solid rgba(39,4,4,0.1);border-radius:14px;overflow:hidden;transition:border-color 0.2s" id="telcelLabel">
-            <input type="radio" name="payMethod" id="payTelcel" value="Telecel" style="display:none" onchange="selectPayMethod('Telecel')" ${localStorage.getItem('custPayMethod')==='Telecel'?'checked':''} />
-            <div style="background:#E31235;padding:12px 14px;display:flex;align-items:center;justify-content:center;width:52px;flex-shrink:0">
-              <span style="font-size:0.85rem;font-weight:900;color:#fff">TC</span>
-            </div>
-            <div style="padding:10px 14px;flex:1">
-              <div style="font-weight:800;font-size:0.85rem;color:var(--dark)">Telecel Cash</div>
-              <div style="font-size:0.75rem;color:rgba(39,4,4,0.5);margin-top:1px">Send to: <strong style="color:var(--dark)">050 951 1619</strong></div>
-            </div>
-            <div style="padding:0 14px;font-size:1rem" id="telcelCheck">${localStorage.getItem('custPayMethod')==='Telecel'?'<i class="fas fa-check-circle" style="color:#E31235"></i>':''}</div>
-          </label>
-        </div>
+        <div class="form-section-title"><i class="fas fa-receipt"></i>Payment</div>
         <div style="background:rgba(255,176,0,0.08);border:1px solid rgba(255,176,0,0.25);border-radius:12px;padding:10px 14px;margin-bottom:0.8rem;font-size:0.75rem;color:rgba(39,4,4,0.65);line-height:1.6">
           <i class="fas fa-info-circle" style="color:var(--amber);margin-right:6px"></i>
-          You'll make payment <strong>instantly</strong> in the next step. MTN Momo → <strong>055 461 1569</strong> | Telecel Cash → <strong>050 951 1619</strong>.
+          Place your order now. The Chop team will contact you to confirm payment and delivery.
         </div>
         <div class="form-section-title"><i class="fas fa-sticky-note"></i>Order Notes</div>
         <div class="form-group">
@@ -2253,13 +2201,9 @@ function renderCartBody() {
     const city = localStorage.getItem('custCity') || 'Elmina';
     const notes = localStorage.getItem('custNotes') || '';
     const email = localStorage.getItem('custEmail') || '';
-    const payMethod = localStorage.getItem('custPayMethod') || '';
-    const payNum = payMethod === 'MTN' ? '055 461 1569' : '050 951 1619';
-    const payColor = payMethod === 'MTN' ? '#FFCC00' : '#E31235';
-    const payTextColor = payMethod === 'MTN' ? '#000' : '#fff';
     const delivery = getCartTotal() >= 100 ? 0 : 5;
     const total = getCartTotal() + delivery;
-    btn.innerHTML = '<i class="fas fa-lock"></i> Pay with ' + (payMethod === 'MTN' ? 'MTN Momo' : 'Telecel Cash');
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Place Order';
     body.innerHTML = `
       <div style="padding:0.5rem 0">
         <div style="background:linear-gradient(135deg,rgba(37,211,102,0.08),rgba(37,211,102,0.03));border:1px solid rgba(37,211,102,0.2);border-radius:14px;padding:1rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px">
@@ -2269,20 +2213,10 @@ function renderCartBody() {
             <div style="font-size:0.75rem;color:rgba(39,4,4,0.5)">Review your details below</div>
           </div>
         </div>
-        ${payMethod ? `
-        <div style="background:rgba(39,4,4,0.04);border-radius:14px;padding:1rem;margin-bottom:1rem">
-          <div style="font-weight:800;font-size:0.82rem;color:var(--dark);margin-bottom:0.7rem;text-transform:uppercase;letter-spacing:0.5px">💳 Payment Method</div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <div style="background:${payColor};border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:${payTextColor};flex-shrink:0">${payMethod === 'MTN' ? 'M' : 'V'}</div>
-            <div>
-              <div style="font-weight:700;font-size:0.85rem;color:var(--dark)">${payMethod === 'MTN' ? 'MTN Mobile Money' : 'Telecel Cash'}</div>
-              <div style="font-size:0.75rem;color:rgba(39,4,4,0.55)">Pay to: <strong>${payNum}</strong></div>
-            </div>
-          </div>
-          <div style="margin-top:0.6rem;font-size:0.72rem;color:rgba(39,4,4,0.5);background:rgba(255,176,0,0.1);border-radius:8px;padding:6px 10px">
-            <i class="fas fa-info-circle" style="color:var(--amber);margin-right:4px"></i>You'll pay <strong>GH₵${total.toFixed(2)}</strong> to <strong>${payNum}</strong> via ${payMethod === 'MTN' ? 'MTN Momo' : 'Telecel Cash'} in the next step.
-          </div>
-        </div>` : ''}
+        <div style="background:rgba(255,176,0,0.08);border:1px solid rgba(255,176,0,0.25);border-radius:12px;padding:10px 14px;margin-bottom:1rem;font-size:0.75rem;color:rgba(39,4,4,0.65);line-height:1.6">
+          <i class="fas fa-info-circle" style="color:var(--amber);margin-right:6px"></i>
+          No online payment is required here. Submit the order and the Chop team will confirm payment and delivery with you.
+        </div>
 
         <div class="cart-summary-box" style="margin-bottom:1rem">
           <div style="font-weight:800;font-size:0.82rem;color:var(--dark);margin-bottom:0.7rem;text-transform:uppercase;letter-spacing:0.5px">Order Summary</div>
@@ -2321,17 +2255,16 @@ function handleCartAction() {
     const payMethodEl = document.querySelector('input[name="payMethod"]:checked');
     const payMethod = payMethodEl ? payMethodEl.value : '';
     if (!name || !phone || !address) { showToast('Please fill in all required fields!'); return; }
-    if (!payMethod) { showToast('Please select a payment method!'); return; }
     localStorage.setItem('custName', name);
     localStorage.setItem('custPhone', phone);
     localStorage.setItem('custEmail', email);
     localStorage.setItem('custAddress', address);
     localStorage.setItem('custCity', city);
     localStorage.setItem('custNotes', notes);
-    localStorage.setItem('custPayMethod', payMethod);
+    localStorage.setItem('custPayMethod', 'To be confirmed');
     switchCartTab('confirm');
   } else if (currentCartTab === 'confirm') {
-    openPaymentModal();
+    submitOrder();
   }
 }
 
@@ -2350,87 +2283,35 @@ const SHOP_NUMBER_MTN = '0554611569';   // MTN Momo
 const SHOP_NUMBER_TELECEL = '0509511619'; // Telecel Cash
 
 // ============================================================
-//  PAYMENT — Hubtel Checkout
+//  ORDER SUBMISSION
 // ============================================================
-async function openPaymentModal() {
-  const payMethod = localStorage.getItem('custPayMethod') || 'MTN';
+async function submitOrder() {
   const name = localStorage.getItem('custName') || '';
   const phone = localStorage.getItem('custPhone') || '';
   const email = localStorage.getItem('custEmail') || phone + '@chopgh.com';
   const delivery = getCartTotal() >= 100 ? 0 : 5;
   const total = getCartTotal() + delivery;
   const orderId = 'CHOP-' + Date.now().toString().slice(-6);
-  localStorage.setItem('pendingOrderId', orderId);
-  localStorage.setItem('pendingTotal', total);
-
-  document.getElementById('payAmount').textContent = `GH₵${total.toFixed(2)}`;
-  document.getElementById('payReference').textContent = orderId;
-  document.getElementById('paymentModal').classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
-
-function closePaymentModal() {
-  document.getElementById('paymentModal').classList.remove('show');
-  document.body.style.overflow = '';
-}
-
-async function startHubtelPayment() {
-  if (!HUBTEL_WORKER_URL) {
-    showToast('Hubtel is not connected yet.');
-    return;
-  }
-  const orderId = localStorage.getItem('pendingOrderId');
-  const phone = localStorage.getItem('custPhone') || '';
-  closePaymentModal();
-  showGlobalLoading('Opening secure payment...');
-  try {
-    const response = await fetch(`${HUBTEL_WORKER_URL}/create-payment`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        reference: orderId,
-        amount: Number(localStorage.getItem('pendingTotal')),
-        name: localStorage.getItem('custName') || '',
-        phone,
-        email: localStorage.getItem('custEmail') || `${phone}@chopgh.com`,
-        address: localStorage.getItem('custAddress') || '',
-        city: localStorage.getItem('custCity') || 'Elmina',
-        notes: localStorage.getItem('custNotes') || '',
-        paymentMethod: localStorage.getItem('custPayMethod') || 'MTN'
-      })
-    });
-    const result = await response.json();
-    if (!response.ok || !result.checkoutUrl) throw new Error(result.error || 'Unable to start Hubtel checkout');
-    window.location.href = result.checkoutUrl;
-  } catch (error) {
-    hideGlobalLoading();
-    showToast(error.message || 'Unable to connect to Hubtel. Please try again.');
-  }
-}
-
-function submitOrderAfterPayment() {
-  const name = localStorage.getItem('custName') || '';
-  const phone = localStorage.getItem('custPhone') || '';
-  const email = localStorage.getItem('custEmail') || '';
   const address = localStorage.getItem('custAddress') || '';
   const city = localStorage.getItem('custCity') || 'Elmina';
   const notes = localStorage.getItem('custNotes') || '';
-  const payMethod = localStorage.getItem('custPayMethod') || 'MTN';
-  const orderId = localStorage.getItem('pendingOrderId') || ('CHOP-' + Date.now().toString().slice(-6));
-  const total = parseFloat(localStorage.getItem('pendingTotal')) || getCartTotal() + (getCartTotal() >= 100 ? 0 : 5);
-
-  // Send order to Formspree (email) + trigger SMS
-  sendOrderToServer(orderId, name, phone, email, address, city, notes, payMethod, total);
-
-  localStorage.setItem('lastOrderId', orderId);
-  localStorage.setItem('lastOrderTotal', total);
+  showGlobalLoading('Sending your order...');
+  try {
+    const sent = await sendOrderToServer(orderId, name, phone, email, address, city, notes, 'To be confirmed', total);
+    if (!sent) throw new Error('The order form did not accept the order');
+    localStorage.setItem('lastOrderId', orderId);
+    localStorage.setItem('lastOrderTotal', total);
+    hideGlobalLoading();
+    showReceipt(orderId, total, name, phone, email, address, city, notes, 'To be confirmed');
+  } catch (error) {
+    hideGlobalLoading();
+    showToast(error.message || 'Unable to send your order. Please try again.');
+  }
 }
 
 async function sendOrderToServer(orderId, name, phone, email, address, city, notes, payMethod, total) {
   const delivery = getCartTotal() >= 100 ? 0 : 5;
   const itemsList = cart.map(i => `• ${i.name} ×${i.qty} — GH₵${(i.price * i.qty).toFixed(2)}`).join('\\n');
-  // SMS notification to both business numbers
-  sendSMSNotification(orderId, total, name, phone, payMethod);
   try {
     const resp = await fetch(FORMSPREE_URL, {
       method: 'POST',
@@ -2449,29 +2330,17 @@ async function sendOrderToServer(orderId, name, phone, email, address, city, not
         orderItems: itemsList
       })
     });
-  } catch (e) {}
+    if (!resp.ok) return false;
+    sendSMSNotification(orderId, total, name, phone, address, city, itemsList);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
-function sendSMSNotification(orderId, total, name, phone, payMethod) {
-  const smsBody = `Chop Order #${orderId}: ${name} | GH₵${total.toFixed(2)} | ${phone} | ${payMethod}`;
+function sendSMSNotification(orderId, total, name, phone, address, city, itemsList) {
+  const smsBody = `Chop Order #${orderId}\n${name} | ${phone}\n${address}, ${city}\n${itemsList}\nTotal: GH₵${total.toFixed(2)}\nPayment: To be confirmed`;
   window.open(`sms:${SHOP_NUMBER_MTN}?body=${encodeURIComponent(smsBody)}`, '_blank');
-  setTimeout(() => {
-    window.open(`sms:${SHOP_NUMBER_TELECEL}?body=${encodeURIComponent(smsBody)}`, '_blank');
-  }, 600);
-}
-
-function finalizeReceipt() {
-  closePaymentModal();
-  const name = localStorage.getItem('custName') || '';
-  const phone = localStorage.getItem('custPhone') || '';
-  const email = localStorage.getItem('custEmail') || '';
-  const address = localStorage.getItem('custAddress') || '';
-  const city = localStorage.getItem('custCity') || 'Elmina';
-  const notes = localStorage.getItem('custNotes') || '';
-  const payMethod = localStorage.getItem('custPayMethod') || 'MTN';
-  const orderId = localStorage.getItem('lastOrderId') || ('CHOP-' + Date.now().toString().slice(-6));
-  const total = parseFloat(localStorage.getItem('lastOrderTotal')) || getCartTotal() + (getCartTotal() >= 100 ? 0 : 5);
-  showReceipt(orderId, total, name, phone, email, address, city, notes, payMethod);
 }
 
 // ============================================================
@@ -2479,9 +2348,6 @@ function finalizeReceipt() {
 // ============================================================
 function showReceipt(orderId, total, name, phone, email, address, city, notes, payMethod) {
   const delivery = getCartTotal() >= 100 ? 0 : 5;
-  const payColor = payMethod === 'MTN' ? '#FFCC00' : '#E31235';
-  const payTextColor = payMethod === 'MTN' ? '#000' : '#fff';
-  const payLabel = payMethod === 'MTN' ? 'MTN Mobile Money' : 'Telecel Cash';
   document.getElementById('receiptOrderId').textContent = '#' + orderId;
   document.getElementById('receiptItems').innerHTML = cart.map(i => `
     <div class="receipt-item">
@@ -2501,28 +2367,20 @@ function showReceipt(orderId, total, name, phone, email, address, city, notes, p
     ${email ? `<div class="receipt-customer-row"><strong>Email:</strong> ${email}</div>` : ''}
     <div class="receipt-customer-row"><strong>Address:</strong> ${address}, ${city}</div>
     ${notes ? `<div class="receipt-customer-row"><strong>Notes:</strong> ${notes}</div>` : ''}
-    ${payMethod ? `
     <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px dashed rgba(39,4,4,0.12)">
-      <div style="font-size:0.75rem;font-weight:800;color:var(--dark);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem">💳 Payment</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="background:${payColor};border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.75rem;color:${payTextColor};flex-shrink:0">${payMethod === 'MTN' ? 'M' : 'TC'}</div>
-        <div>
-          <div style="font-size:0.8rem;font-weight:700;color:var(--dark)">${payLabel}</div>
-          <div style="font-size:0.72rem;color:rgba(39,4,4,0.5)">Paid GH₵${total.toFixed(2)} to ${payMethod === 'MTN' ? '055 461 1569' : '050 951 1619'}</div>
-        </div>
-      </div>
-    </div>` : ''}
+      <div style="font-size:0.75rem;font-weight:800;color:var(--dark);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem">Payment</div>
+      <div style="font-size:0.8rem;color:rgba(39,4,4,0.65)">To be confirmed by the Chop team.</div>
+    </div>
     <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px dashed rgba(39,4,4,0.12)">
       <div style="font-size:0.72rem;font-weight:800;color:var(--dark);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">📬 Confirmation Status</div>
       <div style="font-size:0.78rem;color:rgba(39,4,4,0.6);line-height:1.9">
-        <div><i class="fas fa-check-circle" style="color:#25D366;font-size:0.7rem;margin-right:4px"></i> Order sent to server — payment via ${payMethod === 'MTN' ? '055 461 1569 (MTN)' : '050 951 1619 (Telecel)'}</div>
-        <div><i class="fas fa-check-circle" style="color:#25D366;font-size:0.7rem;margin-right:4px"></i> Email confirmation sent to owner</div>
-        ${phone ? `<div><i class="fas fa-clock" style="color:var(--amber);font-size:0.7rem;margin-right:4px"></i> SMS confirmation to <strong>${phone}</strong> — you'll receive owner feedback shortly</div>` : ''}
+        <div><i class="fas fa-check-circle" style="color:#25D366;font-size:0.7rem;margin-right:4px"></i> Order details sent through the order form</div>
+        <div><i class="fas fa-comment-sms" style="color:var(--amber);font-size:0.7rem;margin-right:4px"></i> Owner SMS draft opened for sending</div>
       </div>
     </div>
       <div style="margin-top:0.5rem;background:linear-gradient(135deg,rgba(37,211,102,0.08),rgba(37,211,102,0.03));border:1px solid rgba(37,211,102,0.2);border-radius:10px;padding:10px 14px;font-size:0.73rem;color:rgba(39,4,4,0.65);line-height:1.6">
         <i class="fas fa-info-circle" style="color:#25D366;margin-right:6px"></i>
-        <strong style="color:var(--dark)">What happens next:</strong> Your order has been sent to the Chop team via SMS and email. You'll receive an SMS confirmation on <strong>${phone}</strong> shortly with your delivery time.
+        <strong style="color:var(--dark)">What happens next:</strong> The Chop team will confirm your payment and delivery time with you.
         ${phone ? `<br><br><a href="sms:${phone}?body=Hi%20${encodeURIComponent(name)}%2C%20your%20Chop%20order%20%23${encodeURIComponent(orderId)}%20is%20confirmed!%20Delivery%20ETA%3A%2030-45%20mins.%20%E2%80%93%20Chop%20Team" style="color:var(--amber);font-weight:700;text-decoration:underline;font-size:0.75rem">📲 Tap here to confirm via SMS to this customer</a> (for business owner)` : ''}
       </div>
       </div>
