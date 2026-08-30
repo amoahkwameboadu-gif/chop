@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <meta name="theme-color" content="#270404" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="icon" type="image/png" href="https://i.ibb.co/ds68rJqr/chop.png" />
+  <link rel="apple-touch-icon" href="https://i.ibb.co/ds68rJqr/chop.png" />
+  <title>Chop – Taste the Vibe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- All page styling now lives in style.css -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== PRELOADER ===== -->
+<div class="preloader" id="preloader">
+  <div class="preloader-content">
+    <div class="preloader-logo-wrap">
+      <div class="preloader-pulse"></div>
+      <img src="https://i.ibb.co/ds68rJqr/chop.png" alt="Chop" class="preloader-logo" />
+    </div>
+    <div class="preloader-brand">Chop<span>.</span></div>
+    <div class="preloader-tagline">Taste the Vibe</div>
+    <div class="preloader-dots">
+      <span class="preloader-dot"></span>
+      <span class="preloader-dot"></span>
+      <span class="preloader-dot"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GLOBAL LOADING OVERLAY ===== -->
+<div class="global-loading-overlay" id="globalLoadingOverlay">
+  <div class="global-loading-box">
+    <div class="global-loading-spinner-wrap">
+      <img src="https://i.ibb.co/ds68rJqr/chop.png" alt="Chop" class="global-loading-logo" />
+      <div class="global-loading-spinner"></div>
+    </div>
+    <div class="global-loading-text" id="globalLoadingText">Processing...</div>
+  </div>
+</div>
+
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- MOBILE DRAWER -->
+<nav class="mobile-drawer" id="mobileDrawer">
+  <ul class="drawer-nav">
+    <li><a href="#hero" onclick="closeDrawer()"><i class="fas fa-home" style="margin-right:10px;color:var(--amber)"></i>Home</a></li>
+    <li><a href="#deals" onclick="closeDrawer()"><i class="fas fa-fire" style="margin-right:10px;color:var(--amber)"></i>Deals</a></li>
+    <li><a href="#menu" onclick="closeDrawer()"><i class="fas fa-utensils" style="margin-right:10px;color:var(--amber)"></i>Menu</a></li>
+    <li><a href="#about" onclick="closeDrawer()"><i class="fas fa-star" style="margin-right:10px;color:var(--amber)"></i>About</a></li>
+    <li><a href="#contact" onclick="closeDrawer()"><i class="fas fa-phone" style="margin-right:10px;color:var(--amber)"></i>Contact</a></li>
+  </ul>
+  <div class="drawer-actions">
+    <button class="drawer-order-btn" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'});closeDrawer()">
+      <i class="fas fa-shopping-bag" style="margin-right:8px"></i>Order Now
+    </button>
+    <div class="drawer-contact">
+      <div style="color:var(--amber);font-weight:700;margin-bottom:6px">📍 Elmina, Ghana</div>
+      055 461 1569<br>053 832 5214
+    </div>
+  </div>
+</nav>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    <div class="nav-logo-icon">
+      <img src="https://i.ibb.co/ds68rJqr/chop.png" alt="Chop Logo" />
+    </div>
+    <span class="nav-logo-text">Chop<span>.</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#deals">Deals</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-cart" onclick="openCart()">
+      <i class="fas fa-shopping-bag"></i>
+      Cart
+      <span class="cart-count" id="navCartCount">0</span>
+    </button>
+    <button class="btn-order-now" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Order Now</button>
+    <div class="hamburger" id="hamburger" onclick="toggleDrawer()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-gradient"></div>
+  <div class="hero-pattern"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <img src="https://i.ibb.co/HLbxyLFQ/ghana.png" alt="Ghana Flag" class="flag-icon" />
+        Ghana's Hottest Fast Food
+      </div>
+      <h1 class="hero-title">
+        <span class="brand">Chop.</span>
+        Taste the Vibe
+      </h1>
+      <p class="hero-subtitle">Bold. Fresh. Unmatched.</p>
+      <p class="hero-desc">Experience Ghanaian fast food like never before — crispy, flavourful, and made to hit different every single time. From the heart of Elmina to your doorstep.</p>
+      <div class="hero-cta">
+        <button class="btn-hero-primary" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">
+          <i class="fas fa-utensils" style="margin-right:8px"></i>Explore Menu
+        </button>
+        <button class="btn-hero-secondary" onclick="document.getElementById('deals').scrollIntoView({behavior:'smooth'})">
+          <i class="fas fa-tag" style="margin-right:8px"></i>View Deals
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num">50+</span>
+          <span class="hero-stat-label">Menu Items</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">10K+</span>
+          <span class="hero-stat-label">Orders Served</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">4.9★</span>
+          <span class="hero-stat-label">Customer Rating</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-image-wrapper">
+      <div class="hero-glow"></div>
+      <img src="chopspring%20rolls%20%20label.png" alt="Chop Spring Rolls" class="hero-food-img" />
+      <div class="hero-floating-badge top-right">🔥 Selling Now<br><small style="font-size:0.7rem;font-weight:600;color:rgba(39,4,4,0.7)">Spring Rolls</small></div>
+      <div class="hero-floating-badge bottom-left">⚡ Free Delivery<br><small style="font-size:0.7rem;font-weight:600;color:rgba(39,4,4,0.7)">Orders over GH₵100</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMO STRIP -->
+<div id="promo-strip">
+  <div class="promo-track" id="promoTrack"></div>
+</div>
+
+<!-- DEALS -->
+<section id="deals">
+  <div class="section-header slide-up">
+    <span class="section-tag">🔥 Hot Deals</span>
+    <h2 class="section-title">Today's <span>Special Offers</span></h2>
+    <p class="section-subtitle">Limited time deals — grab them before they're gone!</p>
+  </div>
+  <div class="deals-grid slide-up" id="dealsGrid"></div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-container">
+    <div class="section-header slide-up">
+      <span class="section-tag" style="background:rgba(255,0,0,0.1);border-color:rgba(255,0,0,0.2);color:var(--red)">🍽️ Full Menu</span>
+      <h2 class="section-title dark">Explore Our <span style="color:var(--red)">Menu</span></h2>
+      <p class="section-subtitle dark">Every bite made with love, spice, and Ghanaian pride.</p>
+    </div>
+    <div class="category-tabs slide-up" id="categoryTabs"></div>
+    <div class="menu-grid" id="menuGrid"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-container">
+    <div class="about-grid">
+      <div class="about-img-stack slide-up">
+        <img src="https://i.ibb.co/0jKYWzmy/riceandbeansstew.jpg" alt="Chop Food" class="about-img-main" />
+        <img src="https://i.ibb.co/PGzYFf5j/Ga-Kenkey.jpg" alt="Ga Kenkey" class="about-img-secondary" />
+        <div class="about-floater">
+          🏆 Best in Elmina
+          <small>Since 2020</small>
+        </div>
+      </div>
+      <div class="about-content slide-up">
+        <div class="about-logo-icon">
+          <img src="https://i.ibb.co/9kZhDbSZ/choplifelogo1.png" alt="Chop Life Logo" />
+        </div>
+        <span class="section-tag">✨ Why Chop?</span>
+        <h2 class="section-title" style="margin-top:0.8rem">We Don't Just Cook.<br><span>We Vibe.</span></h2>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;line-height:1.9;margin-top:1rem">
+          Born in Elmina, Chop is more than a fast food brand — it's a movement. We blend bold West African flavours with modern fast-food energy to give you an experience that hits different. Fresh ingredients, real spice, and zero compromise.
+        </p>
+        <div class="about-features">
+          <div class="about-feature">
+            <div class="feature-icon"><i class="fas fa-fire-alt"></i></div>
+            <div class="feature-text">
+              <h4>Freshly Prepared Daily</h4>
+              <p>Every meal is prepped fresh — no reheated leftovers, ever. That's the Chop promise.</p>
+            </div>
+          </div>
+          <div class="about-feature">
+            <div class="feature-icon"><i class="fas fa-motorcycle"></i></div>
+            <div class="feature-text">
+              <h4>Local Delivery — Elmina to Cape Coast</h4>
+              <p>We deliver across the Elmina–Cape Coast corridor. Fast, reliable, and always on time.</p>
+            </div>
+          </div>
+          <div class="about-feature">
+            <div class="feature-icon"><i class="fas fa-pepper-hot"></i></div>
+            <div class="feature-text">
+              <h4>Authentic Ghanaian Flavours</h4>
+              <p>Our secret spice blends bring the real taste of Ghana — bold, aromatic, and unforgettable.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-container">
+    <div class="section-header slide-up">
+      <span class="section-tag" style="background:rgba(255,0,0,0.1);border-color:rgba(255,0,0,0.2);color:var(--red)">📞 Get In Touch</span>
+      <h2 class="section-title dark">Contact <span style="color:var(--red)">Chop</span></h2>
+      <p class="section-subtitle dark">Reach us on WhatsApp, call us, or send a message below.</p>
+    </div>
+    <div class="contact-cards slide-up">
+      <div class="contact-card" onclick="window.open('https://wa.me/233554611569','_blank')">
+        <div class="contact-card-icon green"><i class="fab fa-whatsapp"></i></div>
+        <h4>WhatsApp Us</h4>
+        <p>Chat with us on WhatsApp for quick orders and inquiries</p>
+        <p style="color:#25D366;font-weight:700;font-size:0.82rem;margin-top:0.5rem">055 461 1569</p>
+      </div>
+      <div class="contact-card" onclick="window.open('tel:+233538325214')">
+        <div class="contact-card-icon red"><i class="fas fa-phone-alt"></i></div>
+        <h4>Call Us</h4>
+        <p>Reach us directly on any of our lines for support</p>
+        <p style="color:var(--red);font-weight:700;font-size:0.82rem;margin-top:0.5rem">053 832 5214</p>
+      </div>
+      <div class="contact-card" onclick="document.getElementById('feedbackName').focus()">
+        <div class="contact-card-icon amber"><i class="fas fa-envelope"></i></div>
+        <h4>Send Feedback</h4>
+        <p>Rate your experience or send us a message below</p>
+        <p style="color:var(--amber);font-weight:700;font-size:0.82rem;margin-top:0.5rem">📍 Elmina, Ghana</p>
+      </div>
+    </div>
+    <div class="feedback-form-wrap slide-up">
+      <h3><i class="fas fa-comment-dots"></i> Send Us a Message</h3>
+      <form id="feedbackForm" onsubmit="submitFeedback(event)">
+        <div class="feedback-grid">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" id="feedbackName" placeholder="Kwame Mensah" required />
+          </div>
+          <div class="form-group">
+            <label>Phone / WhatsApp</label>
+            <input type="tel" id="feedbackPhone" placeholder="055 123 4567" required />
+          </div>
+          <div class="form-group feedback-full">
+            <label>Message</label>
+            <textarea id="feedbackMsg" placeholder="Tell us what you think, or let us know how we can serve you better..." required></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn-feedback-submit">
+          <i class="fas fa-paper-plane"></i> Send Message
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="footer-container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="footer-logo-icon">
+            <img src="https://i.ibb.co/9kZhDbSZ/choplifelogo1.png" alt="Chop Logo" />
+          </div>
+          <span class="footer-logo-name">Chop<span>.</span></span>
+        </div>
+        <p class="footer-desc">Ghana's boldest fast food brand. We serve up crispy, flavourful meals with a Ghanaian soul and a modern vibe. Based in Elmina — delivering the experience to your doorstep across Elmina and Cape Coast.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-tiktok"></i></a>
+          <a href="https://wa.me/233554611569" class="social-btn" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+        </div>
+        <div class="footer-delivery">
+          <h5>🚚 Delivery Info</h5>
+          <p>We deliver to customers within Elmina and Cape Coast only. Free delivery on orders over GH₵100. Standard delivery: GH₵2–GH₵5 depending on your location within the delivery zone.</p>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="#hero"><i class="fas fa-chevron-right"></i>Home</a></li>
+          <li><a href="#deals"><i class="fas fa-chevron-right"></i>Today's Deals</a></li>
+          <li><a href="#menu"><i class="fas fa-chevron-right"></i>Full Menu</a></li>
+          <li><a href="#about"><i class="fas fa-chevron-right"></i>About Chop</a></li>
+          <li><a href="#contact"><i class="fas fa-chevron-right"></i>Contact Us</a></li>
+          <li><a href="#" onclick="openCart()"><i class="fas fa-chevron-right"></i>My Cart</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Menu Categories</h4>
+        <ul class="footer-links">
+          <li><a href="#menu"><i class="fas fa-chevron-right"></i>Rice Dishes</a></li>
+          <li><a href="#menu"><i class="fas fa-chevron-right"></i>Traditional Meals</a></li>
+          <li><a href="#menu"><i class="fas fa-chevron-right"></i>Gari Specials</a></li>
+          <li><a href="#menu"><i class="fas fa-chevron-right"></i>Snacks</a></li>
+          <li><a href="#menu"><i class="fas fa-chevron-right"></i>Drinks</a></li>
+          <li><a href="#menu"><i class="fas fa-chevron-right"></i>Combos & Deals</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Info</h4>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="footer-contact-text">
+            <strong>Location</strong>
+            Elmina, Ghana<br>Delivery: Elmina & Cape Coast
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fab fa-whatsapp"></i></div>
+          <div class="footer-contact-text">
+            <strong>WhatsApp</strong>
+            055 461 1569
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-phone"></i></div>
+          <div class="footer-contact-text">
+            <strong>Phone Lines</strong>
+            053 832 5214
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-clock"></i></div>
+          <div class="footer-contact-text">
+            <strong>Hours</strong>
+            Mon–Sat: 8AM – 11PM<br>Sunday: 10AM – 9PM
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 <a href="#">Chop Ghana</a>. All rights reserved. Made with ❤️ in Elmina.</p>
+      <div class="footer-bottom-right">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Delivery Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- STICKY CART BAR -->
+<div id="cart-bar">
+  <div class="cart-bar-info">
+    <div class="cart-bar-icon"><i class="fas fa-shopping-bag"></i></div>
+    <div class="cart-bar-text">
+      <div class="cart-bar-count" id="cartBarCount">0 items in cart</div>
+      <div class="cart-bar-total"><span class="cur">GH₵</span> <span id="cartBarTotal">0.00</span></div>
+    </div>
+  </div>
+  <div class="cart-bar-right">
+    <button class="btn-view-cart" onclick="openCart()"><i class="fas fa-eye" style="margin-right:6px"></i>View Cart</button>
+    <button class="btn-checkout-bar" onclick="openCart(); switchCartTab('checkout')">
+      <i class="fas fa-bolt"></i>Checkout
+    </button>
+  </div>
+</div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div id="cart-sidebar">
+  <div class="cart-header">
+    <h3>Your <span>Order</span></h3>
+    <button class="close-cart" onclick="closeCart()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cart-tabs">
+    <button class="cart-tab active" id="tabOrder" onclick="switchCartTab('order')"><i class="fas fa-list" style="margin-right:6px"></i>Order</button>
+    <button class="cart-tab" id="tabCheckout" onclick="switchCartTab('checkout')"><i class="fas fa-user" style="margin-right:6px"></i>Details</button>
+    <button class="cart-tab" id="tabConfirm" onclick="switchCartTab('confirm')"><i class="fas fa-check" style="margin-right:6px"></i>Confirm</button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-footer" id="cartFooter">
+    <button class="btn-whatsapp-order" id="whatsappBtn" onclick="handleCartAction()">
+      <i class="fas fa-arrow-right"></i> <span id="whatsappBtnText">Review Order</span>
+    </button>
+  </div>
+</div>
+
+<!-- RECEIPT MODAL -->
+<div class="modal-overlay" id="receiptModal">
+  <div class="modal-box">
+    <div class="receipt-header">
+      <div class="receipt-check"><i class="fas fa-check"></i></div>
+      <div class="receipt-logo">CHOP<small>Taste the Vibe</small></div>
+    </div>
+    <div class="receipt-body">
+      <div class="receipt-order-id">
+        <small>Order Reference</small>
+        <strong id="receiptOrderId">#CHOP-0000</strong>
+      </div>
+      <div class="receipt-items" id="receiptItems"></div>
+      <div class="receipt-total">
+        <span>Total</span>
+        <span id="receiptTotal">GH₵0.00</span>
+      </div>
+      <div class="receipt-customer" id="receiptCustomer"></div>
+      <button class="receipt-whatsapp-btn" id="receiptWhatsappBtn" onclick="closeReceipt()">
+        <i class="fas fa-check-circle" style="font-size:1.2rem"></i>
+        Done — Track via SMS
+      </button>
+      <button onclick="closeReceipt()" style="width:100%;margin-top:0.8rem;background:none;border:2px solid rgba(39,4,4,0.15);padding:12px;border-radius:14px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;color:rgba(39,4,4,0.6);transition:all 0.2s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='rgba(39,4,4,0.15)';this.style.color='rgba(39,4,4,0.6)'">
+        Close & Continue Shopping
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMsg">Item added!</span>
+</div>
+
+<!-- All page behavior now lives in script.js -->
+<script src="script.js"></script>
+</body>
+</html>
