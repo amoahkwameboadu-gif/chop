@@ -19,7 +19,7 @@ const IMG = {
   akyeke:        'https://i.ibb.co/L2T8BNB/akyeke.jpg',
   chips:         'food images/chips.jpg',
   pastries:      'food images/patries.jpg',
-  plantainChips: 'food images/plantian-chips.jpg',
+  plantainChips: 'food images/plantian chips.jpg',
   // Kept original drinks from old menu
   softDrink:     'https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=400&q=80&fit=crop',
 };
