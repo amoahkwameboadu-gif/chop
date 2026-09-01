@@ -1,4 +1,22 @@
-<!DOCTYPE html>
+cd C:\Users\amoah\OneDrive\Desktop\Personal\chop
+git add -A
+git commit -m "fix: resolve infinite preloader and image path issues
+
+- Add explicit opacity/visibility states to preloader CSS to ensure proper transition
+- Rename image file from double space to single space to prevent 404 errors on deployment
+- This fixes the infinite load/blank screen issue on Cloudflare Pages
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git push origin maincd C:\Users\amoah\OneDrive\Desktop\Personal\chop
+git add -A
+git commit -m "fix: resolve infinite preloader and image path issues
+
+- Add explicit opacity/visibility states to preloader CSS to ensure proper transition
+- Rename image file from double space to single space to prevent 404 errors on deployment
+- This fixes the infinite load/blank screen issue on Cloudflare Pages
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git push origin mainNone<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -6,12 +24,11 @@
   <meta name="theme-color" content="#270404" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="icon" type="image/png" href="https://i.ibb.co/ds68rJqr/chop.png" />
-  <link rel="apple-touch-icon" href="https://i.ibb.co/ds68rJqr/chop.png" />
+  <link rel="icon" type="image/png" href="chop.png" />
+  <link rel="apple-touch-icon" href="chop.png" />
   <title>Chop – Taste the Vibe</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://js.paystack.co/v1/inline.js"></script>
   <!-- All page styling now lives in style.css -->
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -22,7 +39,7 @@
   <div class="preloader-content">
     <div class="preloader-logo-wrap">
       <div class="preloader-pulse"></div>
-      <img src="https://i.ibb.co/ds68rJqr/chop.png" alt="Chop" class="preloader-logo" />
+      <img src="chop.png" alt="Chop" class="preloader-logo" />
     </div>
     <div class="preloader-brand">Chop<span>.</span></div>
     <div class="preloader-tagline">Taste the Vibe</div>
@@ -38,7 +55,7 @@
 <div class="global-loading-overlay" id="globalLoadingOverlay">
   <div class="global-loading-box">
     <div class="global-loading-spinner-wrap">
-      <img src="https://i.ibb.co/ds68rJqr/chop.png" alt="Chop" class="global-loading-logo" />
+      <img src="chop.png" alt="Chop" class="global-loading-logo" />
       <div class="global-loading-spinner"></div>
     </div>
     <div class="global-loading-text" id="globalLoadingText">Processing...</div>
@@ -63,7 +80,7 @@
     </button>
     <div class="drawer-contact">
       <div style="color:var(--amber);font-weight:700;margin-bottom:6px">📍 Elmina, Ghana</div>
-      055 461 1569 · 059 335 3204<br>053 832 5214
+      055 461 1569<br>053 832 5214
     </div>
   </div>
 </nav>
@@ -72,7 +89,7 @@
 <nav id="navbar">
   <a href="#hero" class="nav-logo">
     <div class="nav-logo-icon">
-      <img src="https://i.ibb.co/ds68rJqr/chop.png" alt="Chop Logo" />
+      <img src="chop.png" alt="Chop Logo" />
     </div>
     <span class="nav-logo-text">Chop<span>.</span></span>
   </a>
@@ -103,7 +120,7 @@
   <div class="hero-content">
     <div class="hero-text">
       <div class="hero-badge">
-        <img src="https://i.ibb.co/HLbxyLFQ/ghana.png" alt="Ghana Flag" class="flag-icon" />
+        <img src="other images/ghana.png" alt="Ghana Flag" class="flag-icon" />
         Ghana's Hottest Fast Food
       </div>
       <h1 class="hero-title">
@@ -137,8 +154,8 @@
     </div>
     <div class="hero-image-wrapper">
       <div class="hero-glow"></div>
-      <img src="https://i.ibb.co/RTg5BQ95/waakye.jpg" alt="Chop Hero Meal" class="hero-food-img" />
-      <div class="hero-floating-badge top-right">🔥 Fan Fave<br><small style="font-size:0.7rem;font-weight:600;color:rgba(39,4,4,0.7)">Waakye Special</small></div>
+      <img src="other images/chopspring rolls label.png" alt="Chop Spring Rolls" class="hero-food-img" />
+      <div class="hero-floating-badge top-right">🔥 Selling Now<br><small style="font-size:0.7rem;font-weight:600;color:rgba(39,4,4,0.7)">Spring Rolls</small></div>
       <div class="hero-floating-badge bottom-left">⚡ Free Delivery<br><small style="font-size:0.7rem;font-weight:600;color:rgba(39,4,4,0.7)">Orders over GH₵100</small></div>
     </div>
   </div>
@@ -177,8 +194,8 @@
   <div class="about-container">
     <div class="about-grid">
       <div class="about-img-stack slide-up">
-        <img src="https://i.ibb.co/0jKYWzmy/riceandbeansstew.jpg" alt="Chop Food" class="about-img-main" />
-        <img src="https://i.ibb.co/PGzYFf5j/Ga-Kenkey.jpg" alt="Ga Kenkey" class="about-img-secondary" />
+        <img src="food images/riceandbeansstew.jpeg" alt="Chop Food" class="about-img-main" />
+        <img src="food images/Ga Kenkey.jpeg" alt="Ga Kenkey" class="about-img-secondary" />
         <div class="about-floater">
           🏆 Best in Elmina
           <small>Since 2020</small>
@@ -186,7 +203,7 @@
       </div>
       <div class="about-content slide-up">
         <div class="about-logo-icon">
-          <img src="https://i.ibb.co/9kZhDbSZ/choplifelogo1.png" alt="Chop Life Logo" />
+          <img src="choplifelogo1.png" alt="Chop Life Logo" />
         </div>
         <span class="section-tag">✨ Why Chop?</span>
         <h2 class="section-title" style="margin-top:0.8rem">We Don't Just Cook.<br><span>We Vibe.</span></h2>
@@ -236,11 +253,11 @@
         <p>Chat with us on WhatsApp for quick orders and inquiries</p>
         <p style="color:#25D366;font-weight:700;font-size:0.82rem;margin-top:0.5rem">055 461 1569</p>
       </div>
-      <div class="contact-card" onclick="window.open('tel:+233593353204')">
+      <div class="contact-card" onclick="window.open('tel:+233538325214')">
         <div class="contact-card-icon red"><i class="fas fa-phone-alt"></i></div>
         <h4>Call Us</h4>
         <p>Reach us directly on any of our lines for support</p>
-        <p style="color:var(--red);font-weight:700;font-size:0.82rem;margin-top:0.5rem">059 335 3204 · 053 832 5214</p>
+        <p style="color:var(--red);font-weight:700;font-size:0.82rem;margin-top:0.5rem">053 832 5214</p>
       </div>
       <div class="contact-card" onclick="document.getElementById('feedbackName').focus()">
         <div class="contact-card-icon amber"><i class="fas fa-envelope"></i></div>
@@ -281,7 +298,7 @@
       <div class="footer-brand">
         <div class="footer-logo">
           <div class="footer-logo-icon">
-            <img src="https://i.ibb.co/9kZhDbSZ/choplifelogo1.png" alt="Chop Logo" />
+            <img src="choplifelogo1.png" alt="Chop Logo" />
           </div>
           <span class="footer-logo-name">Chop<span>.</span></span>
         </div>
@@ -340,7 +357,7 @@
           <div class="footer-contact-icon"><i class="fas fa-phone"></i></div>
           <div class="footer-contact-text">
             <strong>Phone Lines</strong>
-            059 335 3204<br>053 832 5214
+            053 832 5214
           </div>
         </div>
         <div class="footer-contact-item">
@@ -400,95 +417,6 @@
   </div>
 </div>
 
-<!-- ===== PAYMENT MODAL (MTN MoMo / Telecel — Jumia Style) ===== -->
-<div class="modal-overlay" id="paymentModal">
-  <div class="pay-modal-box">
-    <!-- Top brand bar -->
-    <div class="pay-top-bar" id="payBrandBg"></div>
-    <button class="pay-close-btn" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
-
-    <!-- Header -->
-    <div class="pay-header">
-      <span class="pay-brand-icon" id="payBrandIcon">M</span>
-      <span class="pay-brand-name" id="payBrandName">MTN Mobile Money</span>
-      <span class="pay-brand-badge">SECURE</span>
-    </div>
-
-    <!-- Amount -->
-    <div class="pay-amount-card">
-      <div class="pay-amount-label">YOU ARE PAYING</div>
-      <div class="pay-amount-value" id="payAmount">GH₵0.00</div>
-      <div class="pay-amount-detail">
-        <span>To <strong id="payRecipientName">Chop Ghana</strong></span>
-        <span class="pay-amount-dot">·</span>
-        <span id="payRecipient">055 461 1569</span>
-      </div>
-      <div class="pay-ref">Ref: <strong id="payReference">#CHOP-0000</strong></div>
-    </div>
-
-    <!-- === STEP 1: Phone Number === -->
-    <div class="pay-step" id="payStep1">
-      <div class="pay-step-title"><span class="pay-step-num">1</span> Enter your Mobile Money number</div>
-      <div class="pay-input-wrap">
-        <span class="pay-input-prefix">+233</span>
-        <input type="tel" id="payPhone" class="pay-input pay-num-input" placeholder="55 123 4567" inputmode="numeric" maxlength="15" />
-      </div>
-      <div class="pay-step-hint">Enter the phone number linked to your <span id="payProviderHint">MTN MoMo</span> account</div>
-    </div>
-
-    <!-- === STEP 2: MoMo PIN (like dialing *170#) === -->
-    <div class="pay-step" id="payStep2" style="display:none">
-      <div class="pay-momo-notice">
-        <div class="pay-momo-icon"><i class="fas fa-mobile-alt"></i></div>
-        <div class="pay-momo-text">Dial <strong>*170#</strong> or open your MoMo app to confirm. Enter your 4-digit MoMo PIN below to send money from your wallet.</div>
-      </div>
-      <div class="pay-step-title" style="margin-top:0.8rem"><span class="pay-step-num">2</span> Enter MoMo PIN to send money</div>
-      <div class="pay-pin-grid">
-        <input type="password" id="payPin0" class="pay-pin-cell" maxlength="1" inputmode="numeric" />
-        <input type="password" id="payPin1" class="pay-pin-cell" maxlength="1" inputmode="numeric" />
-        <input type="password" id="payPin2" class="pay-pin-cell" maxlength="1" inputmode="numeric" />
-        <input type="password" id="payPin3" class="pay-pin-cell" maxlength="1" inputmode="numeric" />
-      </div>
-      <div class="pay-pin-hint">This is the same PIN you use to send money on your phone</div>
-    </div>
-
-    <!-- === PROCESSING === -->
-    <div class="pay-step pay-processing" id="payProcessing" style="display:none">
-      <div class="pay-spinner-wrap">
-        <div class="pay-spinner"></div>
-        <div class="pay-bank-icons">
-          <span id="payProcBrand">MTN</span>
-          <i class="fas fa-exchange-alt"></i>
-          <span>CHOP</span>
-        </div>
-      </div>
-      <div class="pay-processing-text">Authorizing payment...</div>
-      <div class="pay-processing-sub">Please wait — do not close this page</div>
-    </div>
-
-    <!-- === RESULT === -->
-    <div class="pay-step pay-result" id="payResult" style="display:none">
-      <div class="pay-result-icon" id="payResultIcon"></div>
-      <div class="pay-result-title" id="payResultTitle"></div>
-      <div class="pay-result-msg" id="payResultMsg"></div>
-    </div>
-
-    <div class="pay-status" id="payStatusMsg"></div>
-
-    <!-- Buttons -->
-    <div class="pay-btn-row">
-      <button class="pay-action-btn" id="payBtn" onclick="payBtnAction()">
-        <span id="payBtnText">Continue</span> <i class="fas fa-arrow-right"></i>
-      </button>
-
-    </div>
-
-    <div class="pay-footer-text">
-      <i class="fas fa-lock"></i> Secured by <span id="payBrandShort">MTN MoMo</span> &nbsp;|&nbsp; Pay to Chop Ghana — <span id="payFooterNum">055 461 1569</span>
-    </div>
-  </div>
-</div>
-
 <!-- RECEIPT MODAL -->
 <div class="modal-overlay" id="receiptModal">
   <div class="modal-box">
@@ -524,7 +452,7 @@
   <span id="toastMsg">Item added!</span>
 </div>
 
-<!-- All page behavior now lives in script.js. Keep this tag at the bottom of body so the DOM is ready before the script runs -->
+<!-- All page behavior now lives in script.js -->
 <script src="script.js"></script>
 </body>
 </html>
