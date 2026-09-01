@@ -16,6 +16,10 @@ const IMG = {
   springRolls:   'food images/springrolls.jpeg',
   vicoStrawberry:'food images/VicoStrawberry.jpeg',
   waakye:        'food images/waakye.jpeg',
+  akyeke:        'https://i.ibb.co/L2T8BNB/akyeke.jpg',
+  chips:         'food images/chips.jpg',
+  pastries:      'food images/patries.jpg',
+  plantainChips: 'food images/plantian-chips.jpg',
   // Kept original drinks from old menu
   softDrink:     'https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=400&q=80&fit=crop',
 };
@@ -33,21 +37,21 @@ const menuItems = [
     img: IMG.riceBeanStew
   },
   {
-    id: 2, category: 'Rice Dishes', available: true,
+    id: 2, category: 'Rice Dishes', available: false,
     name: 'Rice & Beans Stew with Fish',
     desc: 'Rice and beans stew elevated with seasoned fried fish on the side — full Ghanaian vibes.',
-    price: 38, oldPrice: null, hot: true,
+    price: 38, oldPrice: null, hot: false,
     img: IMG.riceBeanStew
   },
   {
-    id: 3, category: 'Rice Dishes', available: true,
+    id: 3, category: 'Rice Dishes', available: false,
     name: 'Rice & Palava Stew with Egg',
     desc: 'Steamed white rice served with rich palava (kontomire) sauce and a boiled egg — pure comfort food.',
     price: 40, oldPrice: 48, hot: false,
     img: IMG.palavaStew
   },
   {
-    id: 4, category: 'Rice Dishes', available: true,
+    id: 4, category: 'Rice Dishes', available: false,
     name: 'Rice & Vegetable Stew',
     desc: 'Light, nutritious rice paired with a fresh garden vegetable stew — clean, balanced, and delicious.',
     price: 35, oldPrice: 38, hot: false,
@@ -56,21 +60,21 @@ const menuItems = [
 
   // === TRADITIONAL MEALS ===
   {
-    id: 5, category: 'Traditional', available: true,
+    id: 5, category: 'Traditional', available: false,
     name: 'Ga Kenkey & Fried Fish',
     desc: 'Authentic Ga kenkey served with crispy seasoned fried fish and fiery pepper sauce. A true Ghanaian classic.',
-    price: 30, oldPrice: 38, hot: true,
+    price: 30, oldPrice: 38, hot: false,
     img: IMG.gaKenkey
   },
   {
-    id: 6, category: 'Traditional', available: true,
+    id: 6, category: 'Traditional', available: false,
     name: 'Waakye',
     desc: 'Iconic Ghanaian waakye (rice & beans) loaded with stew, spaghetti, egg, gari, and plantain. The full experience.',
-    price: 35, oldPrice: 40, hot: true,
+    price: 35, oldPrice: 40, hot: false,
     img: IMG.waakye
   },
   {
-    id: 7, category: 'Traditional', available: true,
+    id: 7, category: 'Traditional', available: false,
     name: 'Spaghetti',
     desc: 'Ghanaian-style spaghetti cooked with rich tomato and pepper sauce. Served as a standalone or side.',
     price: 25, oldPrice: 30, hot: false,
@@ -79,18 +83,27 @@ const menuItems = [
 
   // === GARI SPECIALS ===
   {
-    id: 8, category: 'Gari Specials', available: true,
+    id: 8, category: 'Gari Specials', available: false,
     name: 'Gari & Beans with Fried Plantain & Pear',
     desc: 'Creamy gari and beans served with sweet fried plantain and ripe avocado pear. A power combo.',
-    price: 40, oldPrice: 48, hot: true,
+    price: 40, oldPrice: 48, hot: false,
     img: IMG.gariBeans
   },
   {
-    id: 9, category: 'Gari Specials', available: true,
+    id: 9, category: 'Gari Specials', available: false,
     name: 'Gari & Beans with Fried Plantain',
     desc: 'Classic gari soakings paired with seasoned beans and golden fried plantain. Simple and satisfying.',
     price: 45, oldPrice: 48, hot: false,
     img: IMG.gariBeansPlantain
+  },
+
+  // === AYKEKE ===
+  {
+    id: 13, category: 'Akyeke', available: false,
+    name: 'Akyeke (Attiéké)',
+    desc: 'Traditional Ivorian cassava couscous served with grilled fish, spicy pepper sauce, and fresh vegetables.',
+    price: 45, oldPrice: 55, hot: false,
+    img: IMG.akyeke
   },
 
   // === SNACKS ===
@@ -98,27 +111,48 @@ const menuItems = [
     id: 10, category: 'Snacks', available: true,
     name: 'Spring Rolls',
     desc: 'Crispy golden spring rolls stuffed with spiced vegetables. Perfect as a starter or street-style snack.',
-    price: 12, oldPrice: 15, hot: false,
+    price: 10, oldPrice: 15, hot: false,
     img: IMG.springRolls
+  },
+  {
+    id: 16, category: 'Snacks', available: true,
+    name: 'Chips',
+    desc: 'Crispy golden potato chips, perfectly salted and served hot.',
+    price: 5, oldPrice: null, hot: false,
+    img: IMG.chips
+  },
+  {
+    id: 17, category: 'Snacks', available: true,
+    name: 'Pastries',
+    desc: 'Freshly baked assorted pastries — meat pie, sausage rolls, and more.',
+    price: 20, oldPrice: null, hot: true,
+    img: IMG.pastries
+  },
+  {
+    id: 18, category: 'Snacks', available: true,
+    name: 'Plantain Chips',
+    desc: 'Crunchy fried plantain chips, sweet and savory — a Ghanaian favorite.',
+    price: 5, oldPrice: null, hot: false,
+    img: IMG.plantainChips
   },
 
   // === DRINKS ===
   {
-    id: 11, category: 'Drinks', available: true,
+    id: 11, category: 'Drinks', available: false,
     name: 'Hibiscus Juice (Sobolo)',
     desc: 'Refreshing chilled hibiscus flower drink blended with ginger and citrus — bold, tangy, and authentic.',
     price: 7, oldPrice: 10, hot: false,
     img: IMG.hibiscus
   },
   {
-    id: 12, category: 'Drinks', available: true,
+    id: 12, category: 'Drinks', available: false,
     name: 'Vico Strawberry',
     desc: 'Sweet and creamy Vico strawberry flavoured drink — a beloved Ghanaian treat for all ages.',
     price: 4, oldPrice: 10, hot: false,
     img: IMG.vicoStrawberry
   },
   {
-    id: 15, category: 'Drinks', available: true,
+    id: 15, category: 'Drinks', available: false,
     name: 'Chilled Soft Drinks',
     desc: 'Coke, Fanta, Sprite, or Malta — always ice-cold and served right.',
     price: 10, oldPrice: null, hot: false,
