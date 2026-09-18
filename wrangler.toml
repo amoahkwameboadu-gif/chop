@@ -1,0 +1,9 @@
+name = "chop"
+compatibility_date = "2026-08-20"
+pages_build_output_dir = "./pages"
+
+[vars]
+PUBLIC_SITE_URL = "https://chop.pages.dev"
+
+# Set secret with:
+# npx wrangler pages secret put PAYSTACK_SECRET_KEY

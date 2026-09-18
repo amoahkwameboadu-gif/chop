@@ -1,0 +1,13 @@
+name = "chop"
+main = "src/index.js"
+compatibility_date = "2026-08-20"
+
+[assets]
+directory = "public"
+binding = "ASSETS"
+
+[vars]
+PUBLIC_SITE_URL = "https://chop.choptastethevibe.workers.dev"
+
+# Set secrets with:
+# npx wrangler secret put PAYSTACK_SECRET_KEY
