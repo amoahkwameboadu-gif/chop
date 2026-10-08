@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       url: blob.url,
       filename: file.name.replace(/[\r\n\\/]/g, "-").slice(0, 200) || "image.webp",
       contentType: blob.contentType,
-      sizeBytes: blob.size,
+      sizeBytes: file.size,
       altText,
       createdBy: user.id,
     }).returning();

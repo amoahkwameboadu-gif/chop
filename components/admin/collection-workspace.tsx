@@ -362,9 +362,9 @@ export function CollectionWorkspace({ resource }: { resource: Resource }) {
               <button className="admin-icon-button" type="button" aria-label="Close preview" onClick={() => setPreviewOpen(false)}><X size={16} /></button>
             </header>
             <div className="admin-preview-body">
-              {config.imageField && typeof draft[config.imageField] === "string" && draft[config.imageField] && <img src={String(draft[config.imageField])} alt="Draft preview" />}
+              {config.imageField && typeof draft[config.imageField] === "string" && Boolean(draft[config.imageField]) && <img src={String(draft[config.imageField])} alt="Draft preview" />}
               <span className="admin-pill draft">Preview only</span>
-              {config.fields.filter((field) => field.kind !== "image" && field.kind !== "checkbox" && field.kind !== "product-picker").map((field) => {
+              {config.fields.filter((field) => field.kind !== "image" && field.kind !== "checkbox").map((field) => {
                 const value = draft[field.name];
                 const text = Array.isArray(value) ? value.join(", ") : String(value ?? "");
                 if (!text) return null;

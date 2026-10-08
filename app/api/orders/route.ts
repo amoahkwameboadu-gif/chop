@@ -31,6 +31,13 @@ export async function POST(request: Request) {
     }
 
     const catalog = await getStorefrontProductData();
+    const websiteStatus = String(catalog.siteSettings.websiteStatus ?? "open");
+    if (websiteStatus !== "open") {
+      throw new CmsRequestError(
+        websiteStatus === "maintenance" ? "Ordering is paused while we update the store." : "The store is not accepting orders right now.",
+        409,
+      );
+    }
     const catalogById = new Map(catalog.products.map((product) => [String(product.id), product]));
     const items = [...requested.entries()].map(([id, quantity]) => {
       const product = catalogById.get(id);
@@ -72,7 +79,7 @@ export async function POST(request: Request) {
       ? 0
       : roundMoney(Number(area?.fee ?? defaultFee));
     const total = roundMoney(subtotal + deliveryFee);
-    const reference = `CHOP-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+    const reference = `CHOP-${crypto.randomUUID().slice(0, 12).toUpperCase()}`;
 
     const [order] = await db.insert(cmsOrders).values({
       reference,
