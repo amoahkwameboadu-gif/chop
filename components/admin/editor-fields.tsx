@@ -30,13 +30,13 @@ export function EditorFields({ fields, values, onChange }: EditorFieldsProps) {
   return (
     <div className="admin-editor-body">
       {fields.map((field) => (
-        <FieldInput key={field.name} field={field} value={values[field.name]} onChange={onChange} />
+        <FieldInput key={field.name} field={field} value={values[field.name]} values={values} onChange={onChange} />
       ))}
     </div>
   );
 }
 
-function FieldInput({ field, value, onChange }: { field: EditorField; value: unknown; onChange: EditorFieldsProps["onChange"] }) {
+function FieldInput({ field, value, values, onChange }: { field: EditorField; value: unknown; values: Record<string, unknown>; onChange: EditorFieldsProps["onChange"] }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const mediaKey = field.kind === "image" ? "/api/admin/media" : null;

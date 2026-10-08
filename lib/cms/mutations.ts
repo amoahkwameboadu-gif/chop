@@ -1,5 +1,6 @@
 import { del } from "@vercel/blob";
 import { and, eq, like, ne, or } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import {
   cmsActivityLog,
@@ -37,6 +38,7 @@ import type { CmsStatus } from "@/lib/cms/types";
 
 export type CmsAction = "draft" | "publish" | "hide";
 export type CmsActor = { id: string; email: string; name?: string };
+type ContentSchemaData = z.infer<(typeof contentSchemas)[keyof typeof contentSchemas]>;
 
 function validateAction(value: unknown): CmsAction {
   if (value === "draft" || value === "publish" || value === "hide") return value;
@@ -59,11 +61,13 @@ function validateId(value: unknown, allowLegacy = false) {
   return value;
 }
 
-function validateParsed<T>(result: { success: boolean; data?: T; error?: { issues: Array<{ message: string }> } }): T {
-  if (!result.success || result.data === undefined) {
-    throw new CmsRequestError(result.error?.issues[0]?.message ?? "Please check the submitted information.", 400);
-  }
-  return result.data;
+type ValidationResult<T> =
+  | { success: true; data: T }
+  | { success: false; error: { issues: Array<{ message: string }> } };
+
+function validateParsed<T>(result: ValidationResult<T>): T {
+  if (result.success) return result.data;
+  throw new CmsRequestError(result.error.issues[0]?.message ?? "Please check the submitted information.", 400);
 }
 
 async function logChange(actor: CmsActor, action: CmsAction | string, entityType: string, entityId: string, label: string) {
@@ -200,7 +204,7 @@ async function saveContent(actor: CmsActor, payload: Record<string, unknown>, ac
     throw new CmsRequestError("Choose a valid website content section.", 400);
   }
   const schema = contentSchemas[key as keyof typeof contentSchemas];
-  const parsed = validateParsed(schema.safeParse(payload.data));
+  const parsed = validateParsed<ContentSchemaData>(schema.safeParse(payload.data));
   const contentKey = key;
   const [existing] = await db.select().from(cmsContent).where(eq(cmsContent.contentKey, contentKey)).limit(1);
   const status = getStatus(action);

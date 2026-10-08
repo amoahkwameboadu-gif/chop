@@ -27,7 +27,7 @@ const IMG = {
 // ============================================================
 //  MENU DATA
 // ============================================================
-const menuItems = [
+let menuItems = [
   // === RICE DISHES ===
   {
     id: 1, category: 'Rice Dishes', available: false,
@@ -163,7 +163,7 @@ const menuItems = [
 // ============================================================
 //  DEALS DATA
 // ============================================================
-const deals = [
+let deals = [
   {
     name: 'Waakye Family Box',
     desc: 'Waakye with all toppings for 4 — stew, spaghetti, egg, plantain, and drinks.',
@@ -193,7 +193,7 @@ const deals = [
 // ============================================================
 //  PROMO MESSAGES
 // ============================================================
-const promoMessages = [
+let promoMessages = [
   '🔥 Free Delivery on Orders Over GH₵100',
   '⚡ Fresh Waakye — Served Daily!',
   '🎉 Kenkey Combo Deal — GH₵40 Only!',
@@ -210,6 +210,84 @@ const promoMessages = [
 let cart = [];
 let currentCategory = 'All';
 let currentCartTab = 'order';
+let currentCheckout = { name: '', phone: '', email: '', address: '', city: 'Elmina', notes: '' };
+let orderSubmitting = false;
+let storefrontData = {
+  initialized: false,
+  siteSettings: { businessName: 'Chop', currency: 'GHS', websiteStatus: 'open', whatsapp: '055 461 1569', phone: '053 832 5214' },
+  homepage: {},
+  about: {},
+  footerSettings: {},
+  deliverySettings: { defaultFee: 5, freeDeliveryThreshold: 100, minimumOrder: 0, deliveryAvailable: true },
+  deliveryAreas: [
+    { name: 'Elmina', city: 'Elmina', fee: 5, minimumOrder: 0, available: true },
+    { name: 'Cape Coast', city: 'Cape Coast', fee: 5, minimumOrder: 0, available: true },
+    { name: 'Elmina — Benya', city: 'Elmina - Benya', fee: 5, minimumOrder: 0, available: true },
+    { name: 'Elmina — Bantuma', city: 'Elmina - Bantuma', fee: 5, minimumOrder: 0, available: true },
+    { name: 'Cape Coast — Pedu', city: 'Cape Coast - Pedu', fee: 5, minimumOrder: 0, available: true },
+    { name: 'Cape Coast — Abura', city: 'Cape Coast - Abura', fee: 5, minimumOrder: 0, available: true }
+  ],
+  navigation: []
+};
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>\"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;'
+  })[character]);
+}
+
+function inlineArgument(value) {
+  return escapeHtml(JSON.stringify(String(value)));
+}
+
+function sameItemId(left, right) {
+  return String(left) === String(right);
+}
+
+function currencySymbol() {
+  return ({ GHS: 'GH₵', USD: '$', GBP: '£', EUR: '€' })[storefrontData.siteSettings.currency] || 'GH₵';
+}
+
+function formatPrice(value) {
+  const amount = Number(value);
+  return `${currencySymbol()}${Number.isFinite(amount) ? amount.toFixed(Number.isInteger(amount) ? 0 : 2) : '0'}`;
+}
+
+function safeLink(value, fallback = '#menu') {
+  const candidate = String(value ?? '').trim();
+  if (candidate.startsWith('#') || (candidate.startsWith('/') && !candidate.startsWith('//'))) return candidate;
+  try {
+    return ['https:', 'mailto:', 'tel:'].includes(new URL(candidate).protocol) ? candidate : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function getDeliveryArea(city = currentCheckout.city) {
+  return storefrontData.deliveryAreas.find(area => String(area.city ?? area.name) === String(city));
+}
+
+function deliveryAreaOptions() {
+  const areas = storefrontData.deliveryAreas;
+  if (areas.length && !areas.some(area => String(area.city ?? area.name) === currentCheckout.city)) {
+    const firstAvailable = areas.find(area => area.available !== false) || areas[0];
+    currentCheckout.city = String(firstAvailable.city ?? firstAvailable.name ?? '');
+  }
+  if (!areas.length) return '<option value="">No delivery areas are configured</option>';
+  return areas.map(area => {
+    const city = String(area.city ?? area.name ?? '');
+    const selected = city === currentCheckout.city ? ' selected' : '';
+    const disabled = area.available === false ? ' disabled' : '';
+    return `<option value="${escapeHtml(city)}"${selected}${disabled}>${escapeHtml(area.name ?? city)}</option>`;
+  }).join('');
+}
+
+function getDeliveryFee(subtotal = getCartTotal(), city = currentCheckout.city) {
+  const threshold = Number(storefrontData.deliverySettings.freeDeliveryThreshold ?? 100);
+  if (threshold > 0 && subtotal >= threshold) return 0;
+  const fee = Number(getDeliveryArea(city)?.fee ?? storefrontData.deliverySettings.defaultFee ?? 5);
+  return Number.isFinite(fee) ? Math.max(0, fee) : 0;
+}
 
 // ============================================================
 //  BUILD PROMO STRIP
@@ -219,7 +297,7 @@ function buildPromoStrip() {
   const doubled = [...promoMessages, ...promoMessages];
   track.innerHTML = doubled.map(msg => `
     <div class="promo-item">
-      <i class="fas fa-star"></i>${msg}
+      <i class="fas fa-star"></i>${escapeHtml(msg)}
       <span class="promo-dot"></span>
     </div>
   `).join('');
@@ -231,17 +309,18 @@ function buildPromoStrip() {
 function buildDeals() {
   const grid = document.getElementById('dealsGrid');
   grid.innerHTML = deals.map(d => `
-    <div class="deal-card" onclick="showToast('Deal added to inquiry!')">
+    <a class="deal-card" href="${escapeHtml(safeLink(d.ctaHref))}" style="color:inherit;text-decoration:none">
       <div class="deal-img-wrap">
-        <img src="${d.img}" alt="${d.name}" />
+        <img src="${escapeHtml(d.img)}" alt="${escapeHtml(d.name)}" loading="lazy" />
       </div>
       <div class="deal-info">
-        <span class="deal-badge">${d.badge}</span>
-        <div class="deal-name">${d.name}</div>
-        <div class="deal-desc">${d.desc}</div>
-        <div class="deal-price">GH₵${d.price} <span>GH₵${d.original}</span></div>
+        <span class="deal-badge">${escapeHtml(d.badge)}</span>
+        <div class="deal-name">${escapeHtml(d.name)}</div>
+        <div class="deal-desc">${escapeHtml(d.desc)}</div>
+        <div class="deal-price">${formatPrice(d.price)} ${(d.originalPrice ?? d.original) ? `<span>${formatPrice(d.originalPrice ?? d.original)}</span>` : ''}</div>
+        ${d.ctaText ? `<span class="deal-cta">${escapeHtml(d.ctaText)}</span>` : ''}
       </div>
-    </div>
+    </a>
   `).join('');
 }
 
@@ -264,7 +343,7 @@ const categoryIcons = {
 function buildCategoryTabs() {
   const tabs = document.getElementById('categoryTabs');
   tabs.innerHTML = getCategories().map(cat => `
-    <button class="tab-btn ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">
+    <button class="tab-btn ${cat === currentCategory ? 'active' : ''}" onclick="filterCategory(${inlineArgument(cat)})">
       <i class="${categoryIcons[cat] || 'fas fa-star'}"></i>${cat}
     </button>
   `).join('');
@@ -287,33 +366,33 @@ function buildMenuGrid() {
     : menuItems.filter(i => i.category === currentCategory);
 
   grid.innerHTML = filtered.map(item => {
-    const cartItem = cart.find(c => c.id === item.id);
+    const cartItem = cart.find(c => sameItemId(c.id, item.id));
     const qty = cartItem ? cartItem.qty : 0;
-    const isAvail = item.available !== false;
+    const isAvail = item.available !== false && storefrontData.siteSettings.websiteStatus === 'open' && storefrontData.deliverySettings.deliveryAvailable !== false;
     return `
-      <div class="food-card${!isAvail ? ' unavailable' : ''}" id="card-${item.id}">
+      <div class="food-card${!isAvail ? ' unavailable' : ''}" id="card-${escapeHtml(item.id)}">
         <div class="food-card-img-wrap">
-          <img src="${item.img}" alt="${item.name}" style="${!isAvail ? 'filter: grayscale(0.6) brightness(0.65);' : ''}" />
-          <span class="food-category-badge">${item.category}</span>
+          <img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.name)}" loading="lazy" style="${!isAvail ? 'filter: grayscale(0.6) brightness(0.65);' : ''}" />
+          <span class="food-category-badge">${escapeHtml(item.category)}</span>
           ${item.hot ? '<span class="food-hot-badge">HOT</span>' : ''}
-          ${!isAvail ? '<span class="food-unavailable-badge">Coming Soon</span>' : ''}
+          ${!isAvail ? `<span class="food-unavailable-badge">${item.available === false ? 'Coming Soon' : 'Ordering Closed'}</span>` : ''}
         </div>
         <div class="food-card-body" style="${!isAvail ? 'opacity:0.7' : ''}">
-          <div class="food-name">${item.name}</div>
-          <div class="food-desc">${item.desc}</div>
+          <div class="food-name">${escapeHtml(item.name)}</div>
+          <div class="food-desc">${escapeHtml(item.desc)}</div>
           <div class="food-card-footer">
             <div class="food-price">
-              <span class="currency">GH₵</span>${item.price}
-              ${item.oldPrice ? `<span class="old-price">GH₵${item.oldPrice}</span>` : ''}
+              <span class="currency">${escapeHtml(currencySymbol())}</span>${Number(item.price).toFixed(Number.isInteger(Number(item.price)) ? 0 : 2)}
+              ${item.oldPrice ? `<span class="old-price">${formatPrice(item.oldPrice)}</span>` : ''}
             </div>
             ${!isAvail
-              ? `<button class="btn-unavailable" disabled><i class="fas fa-clock"></i></button>`
+              ? `<button class="btn-unavailable" disabled aria-label="${item.available === false ? 'Currently unavailable' : 'Ordering closed'}"><i class="fas fa-clock"></i></button>`
               : qty === 0
-                ? `<button class="btn-add-cart" onclick="addToCart(${item.id})"><i class="fas fa-plus"></i></button>`
+                ? `<button class="btn-add-cart" aria-label="Add ${escapeHtml(item.name)} to cart" onclick="addToCart(${inlineArgument(item.id)})"><i class="fas fa-plus"></i></button>`
                 : `<div class="quantity-controls">
-                     <button class="qty-btn minus" onclick="updateCardQty(${item.id}, -1)"><i class="fas fa-minus"></i></button>
+                     <button class="qty-btn minus" aria-label="Remove one ${escapeHtml(item.name)}" onclick="updateCardQty(${inlineArgument(item.id)}, -1)"><i class="fas fa-minus"></i></button>
                      <span class="qty-num">${qty}</span>
-                     <button class="qty-btn plus" onclick="updateCardQty(${item.id}, 1)"><i class="fas fa-plus"></i></button>
+                     <button class="qty-btn plus" aria-label="Add one ${escapeHtml(item.name)}" onclick="updateCardQty(${inlineArgument(item.id)}, 1)"><i class="fas fa-plus"></i></button>
                    </div>`
             }
           </div>
@@ -327,12 +406,16 @@ function buildMenuGrid() {
 //  CART LOGIC
 // ============================================================
 function addToCart(id) {
-  const item = menuItems.find(i => i.id === id);
+  const item = menuItems.find(i => sameItemId(i.id, id));
   if (!item || item.available === false) {
     showToast('This item is currently unavailable');
     return;
   }
-  const existing = cart.find(c => c.id === id);
+  if (storefrontData.siteSettings.websiteStatus !== 'open' || storefrontData.deliverySettings.deliveryAvailable === false) {
+    showToast('Ordering is currently paused. Please contact CHOP for help.');
+    return;
+  }
+  const existing = cart.find(c => sameItemId(c.id, id));
   if (existing) { existing.qty++; }
   else { cart.push({ ...item, qty: 1 }); }
   updateCart();
@@ -342,20 +425,20 @@ function addToCart(id) {
 }
 
 function updateCardQty(id, delta) {
-  const existing = cart.find(c => c.id === id);
+  const existing = cart.find(c => sameItemId(c.id, id));
   if (existing) {
     existing.qty += delta;
-    if (existing.qty <= 0) cart = cart.filter(c => c.id !== id);
+    if (existing.qty <= 0) cart = cart.filter(c => !sameItemId(c.id, id));
   }
   updateCart();
   buildMenuGrid();
 }
 
 function updateCartItemQty(id, delta) {
-  const existing = cart.find(c => c.id === id);
+  const existing = cart.find(c => sameItemId(c.id, id));
   if (existing) {
     existing.qty += delta;
-    if (existing.qty <= 0) cart = cart.filter(c => c.id !== id);
+    if (existing.qty <= 0) cart = cart.filter(c => !sameItemId(c.id, id));
   }
   updateCart();
   buildMenuGrid();
@@ -363,7 +446,7 @@ function updateCartItemQty(id, delta) {
 }
 
 function removeFromCart(id) {
-  cart = cart.filter(c => c.id !== id);
+  cart = cart.filter(c => !sameItemId(c.id, id));
   updateCart();
   buildMenuGrid();
   renderCartBody();
@@ -378,6 +461,7 @@ function updateCart() {
   document.getElementById('navCartCount').textContent = count;
   document.getElementById('cartBarCount').textContent = `${count} item${count !== 1 ? 's' : ''} in cart`;
   document.getElementById('cartBarTotal').textContent = total.toFixed(2);
+  document.querySelectorAll('.cart-bar-total .cur').forEach(element => { element.textContent = currencySymbol(); });
   const bar = document.getElementById('cart-bar');
   count > 0 ? bar.classList.add('visible') : bar.classList.remove('visible');
   if (document.getElementById('cart-sidebar').classList.contains('open')) renderCartBody();
@@ -428,29 +512,31 @@ function renderCartBody() {
         </div>`;
       return;
     }
-    const delivery = getCartTotal() >= 100 ? 0 : 5;
-    const total = getCartTotal() + delivery;
+    const subtotal = getCartTotal();
+    const delivery = getDeliveryFee(subtotal);
+    const total = subtotal + delivery;
+    const freeDeliveryThreshold = Number(storefrontData.deliverySettings.freeDeliveryThreshold ?? 100);
     body.innerHTML = `
       ${cart.map(item => `
         <div class="cart-item">
-          <img class="cart-item-img" src="${item.img}" alt="${item.name}" />
+          <img class="cart-item-img" src="${escapeHtml(item.img)}" alt="${escapeHtml(item.name)}" />
           <div class="cart-item-details">
-            <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-price">GH₵${(item.price * item.qty).toFixed(2)}</div>
+            <div class="cart-item-name">${escapeHtml(item.name)}</div>
+            <div class="cart-item-price">${formatPrice(item.price * item.qty)}</div>
           </div>
           <div class="cart-item-controls">
-            <button class="cart-qty-btn minus" onclick="updateCartItemQty(${item.id}, -1)"><i class="fas fa-minus"></i></button>
+            <button class="cart-qty-btn minus" aria-label="Remove one ${escapeHtml(item.name)}" onclick="updateCartItemQty(${inlineArgument(item.id)}, -1)"><i class="fas fa-minus"></i></button>
             <span class="cart-qty-num">${item.qty}</span>
-            <button class="cart-qty-btn plus" onclick="updateCartItemQty(${item.id}, 1)"><i class="fas fa-plus"></i></button>
+            <button class="cart-qty-btn plus" aria-label="Add one ${escapeHtml(item.name)}" onclick="updateCartItemQty(${inlineArgument(item.id)}, 1)"><i class="fas fa-plus"></i></button>
           </div>
-          <button class="cart-item-remove" onclick="removeFromCart(${item.id})"><i class="fas fa-trash-alt"></i></button>
+          <button class="cart-item-remove" aria-label="Remove ${escapeHtml(item.name)} from cart" onclick="removeFromCart(${inlineArgument(item.id)})"><i class="fas fa-trash-alt"></i></button>
         </div>
       `).join('')}
       <div class="cart-summary-box">
-        <div class="cart-summary-row"><span>Subtotal</span><span>GH₵${getCartTotal().toFixed(2)}</span></div>
-        <div class="cart-summary-row"><span>Delivery</span><span>${getCartTotal() >= 100 ? '<span style="color:#25D366;font-weight:700">FREE</span>' : 'GH₵' + delivery.toFixed(2)}</span></div>
-        <div class="cart-summary-row total"><span>Total</span><span>GH₵${total.toFixed(2)}</span></div>
-        ${getCartTotal() < 100 ? `<p style="font-size:0.72rem;color:var(--amber);margin-top:6px;text-align:center">Add GH₵${(100-getCartTotal()).toFixed(2)} more for free delivery!</p>` : ''}
+        <div class="cart-summary-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+        <div class="cart-summary-row"><span>Delivery</span><span>${delivery === 0 ? '<span style="color:#25D366;font-weight:700">FREE</span>' : formatPrice(delivery)}</span></div>
+        <div class="cart-summary-row total"><span>Total</span><span>${formatPrice(total)}</span></div>
+        ${freeDeliveryThreshold > 0 && subtotal < freeDeliveryThreshold ? `<p style="font-size:0.72rem;color:var(--amber);margin-top:6px;text-align:center">Add ${formatPrice(freeDeliveryThreshold - subtotal)} more for free delivery!</p>` : ''}
       </div>
     `;
   } else if (currentCartTab === 'checkout') {
@@ -460,30 +546,25 @@ function renderCartBody() {
         <div class="form-section-title"><i class="fas fa-user"></i>Your Information</div>
         <div class="form-group">
           <label>Full Name *</label>
-          <input type="text" id="custName" placeholder="Kwame Mensah" value="${localStorage.getItem('custName')||''}" />
+          <input type="text" id="custName" placeholder="Kwame Mensah" value="${escapeHtml(currentCheckout.name)}" autocomplete="name" />
         </div>
         <div class="form-group">
           <label>Phone / WhatsApp *</label>
-          <input type="tel" id="custPhone" placeholder="055 123 4567" value="${localStorage.getItem('custPhone')||''}" />
+          <input type="tel" id="custPhone" placeholder="055 123 4567" value="${escapeHtml(currentCheckout.phone)}" autocomplete="tel" />
         </div>
         <div class="form-group">
           <label>Email Address (for order confirmation)</label>
-          <input type="email" id="custEmail" placeholder="yourname@gmail.com" value="${localStorage.getItem('custEmail')||''}" />
+          <input type="email" id="custEmail" placeholder="yourname@gmail.com" value="${escapeHtml(currentCheckout.email)}" autocomplete="email" />
         </div>
         <div class="form-section-title"><i class="fas fa-map-marker-alt"></i>Delivery Details</div>
         <div class="form-group">
           <label>Delivery Address *</label>
-          <input type="text" id="custAddress" placeholder="e.g. Benya, Elmina or Pedu, Cape Coast" value="${localStorage.getItem('custAddress')||''}" />
+          <input type="text" id="custAddress" placeholder="e.g. Benya, Elmina or Pedu, Cape Coast" value="${escapeHtml(currentCheckout.address)}" autocomplete="street-address" />
         </div>
         <div class="form-group">
           <label>City / Area</label>
-          <select id="custCity">
-            <option value="Elmina" ${localStorage.getItem('custCity')==='Elmina'?'selected':''}>Elmina</option>
-            <option value="Cape Coast" ${localStorage.getItem('custCity')==='Cape Coast'?'selected':''}>Cape Coast</option>
-            <option value="Elmina - Benya" ${localStorage.getItem('custCity')==='Elmina - Benya'?'selected':''}>Elmina – Benya</option>
-            <option value="Elmina - Bantuma" ${localStorage.getItem('custCity')==='Elmina - Bantuma'?'selected':''}>Elmina – Bantuma</option>
-            <option value="Cape Coast - Pedu" ${localStorage.getItem('custCity')==='Cape Coast - Pedu'?'selected':''}>Cape Coast – Pedu</option>
-            <option value="Cape Coast - Abura" ${localStorage.getItem('custCity')==='Cape Coast - Abura'?'selected':''}>Cape Coast – Abura</option>
+          <select id="custCity" autocomplete="address-level2">
+            ${deliveryAreaOptions()}
           </select>
         </div>
         <div class="form-section-title"><i class="fas fa-receipt"></i>Payment</div>
@@ -494,22 +575,24 @@ function renderCartBody() {
         <div class="form-section-title"><i class="fas fa-sticky-note"></i>Order Notes</div>
         <div class="form-group">
           <label>Special Instructions</label>
-          <textarea id="custNotes" placeholder="e.g. Extra pepper sauce, no onions, ring bell on arrival...">${localStorage.getItem('custNotes')||''}</textarea>
+          <textarea id="custNotes" placeholder="e.g. Extra pepper sauce, no onions, ring bell on arrival...">${escapeHtml(currentCheckout.notes)}</textarea>
         </div>
         <button type="button" class="mobile-send-order" onclick="handleCartAction()">
           <i class="fas fa-comment-sms"></i> Send Order by SMS
         </button>
       </div>
     `;
+    [['custName', 'name'], ['custPhone', 'phone'], ['custEmail', 'email'], ['custAddress', 'address'], ['custCity', 'city'], ['custNotes', 'notes']].forEach(([elementId, key]) => {
+      const field = document.getElementById(elementId);
+      field?.addEventListener('input', () => { currentCheckout[key] = field.value; });
+      field?.addEventListener('change', () => { currentCheckout[key] = field.value; });
+    });
   } else if (currentCartTab === 'confirm') {
-    const name = localStorage.getItem('custName') || '';
-    const phone = localStorage.getItem('custPhone') || '';
-    const address = localStorage.getItem('custAddress') || '';
-    const city = localStorage.getItem('custCity') || 'Elmina';
-    const notes = localStorage.getItem('custNotes') || '';
-    const email = localStorage.getItem('custEmail') || '';
-    const delivery = getCartTotal() >= 100 ? 0 : 5;
-    const total = getCartTotal() + delivery;
+    const { name, phone, address, city, notes, email } = currentCheckout;
+    const subtotal = getCartTotal();
+    const delivery = getDeliveryFee(subtotal);
+    const total = subtotal + delivery;
+    const freeDeliveryThreshold = Number(storefrontData.deliverySettings.freeDeliveryThreshold ?? 100);
     btn.innerHTML = '<i class="fas fa-comment-sms"></i> Place Order by SMS';
     body.innerHTML = `
       <div style="padding:0.5rem 0">
@@ -529,19 +612,19 @@ function renderCartBody() {
           <div style="font-weight:800;font-size:0.82rem;color:var(--dark);margin-bottom:0.7rem;text-transform:uppercase;letter-spacing:0.5px">Order Summary</div>
           ${cart.map(i => `
             <div class="cart-summary-row">
-              <span>${i.name} x${i.qty}</span>
-              <span style="color:var(--dark);font-weight:700">GH₵${(i.price * i.qty).toFixed(2)}</span>
+              <span>${escapeHtml(i.name)} ×${i.qty}</span>
+              <span style="color:var(--dark);font-weight:700">${formatPrice(i.price * i.qty)}</span>
             </div>`).join('')}
-          <div class="cart-summary-row"><span>Delivery</span><span>${delivery === 0 ? '<span style="color:#25D366;font-weight:700">FREE</span>' : 'GH₵' + delivery.toFixed(2)}</span></div>
-          <div class="cart-summary-row total"><span>TOTAL</span><span>GH₵${total.toFixed(2)}</span></div>
+          <div class="cart-summary-row"><span>Delivery</span><span>${delivery === 0 ? '<span style="color:#25D366;font-weight:700">FREE</span>' : formatPrice(delivery)}</span></div>
+          <div class="cart-summary-row total"><span>TOTAL</span><span>${formatPrice(total)}</span></div>
         </div>
         <div style="background:rgba(39,4,4,0.04);border-radius:14px;padding:1rem">
           <div style="font-weight:800;font-size:0.82rem;color:var(--dark);margin-bottom:0.7rem;text-transform:uppercase;letter-spacing:0.5px">Your Details</div>
-          ${name ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65);margin-bottom:4px"><i class="fas fa-user" style="color:var(--red);margin-right:6px;width:14px"></i>${name}</div>` : ''}
-          ${phone ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65);margin-bottom:4px"><i class="fas fa-phone" style="color:var(--red);margin-right:6px;width:14px"></i>${phone}</div>` : ''}
-          ${email ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65);margin-bottom:4px"><i class="fas fa-envelope" style="color:var(--red);margin-right:6px;width:14px"></i>${email}</div>` : ''}
-          ${address ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65);margin-bottom:4px"><i class="fas fa-map-marker-alt" style="color:var(--red);margin-right:6px;width:14px"></i>${address}, ${city}</div>` : ''}
-          ${notes ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65)"><i class="fas fa-sticky-note" style="color:var(--red);margin-right:6px;width:14px"></i>${notes}</div>` : ''}
+          ${name ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65);margin-bottom:4px"><i class="fas fa-user" style="color:var(--red);margin-right:6px;width:14px"></i>${escapeHtml(name)}</div>` : ''}
+          ${phone ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65);margin-bottom:4px"><i class="fas fa-phone" style="color:var(--red);margin-right:6px;width:14px"></i>${escapeHtml(phone)}</div>` : ''}
+          ${email ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65);margin-bottom:4px"><i class="fas fa-envelope" style="color:var(--red);margin-right:6px;width:14px"></i>${escapeHtml(email)}</div>` : ''}
+          ${address ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65);margin-bottom:4px"><i class="fas fa-map-marker-alt" style="color:var(--red);margin-right:6px;width:14px"></i>${escapeHtml(address)}, ${escapeHtml(city)}</div>` : ''}
+          ${notes ? `<div style="font-size:0.82rem;color:rgba(39,4,4,0.65)"><i class="fas fa-sticky-note" style="color:var(--red);margin-right:6px;width:14px"></i>${escapeHtml(notes)}</div>` : ''}
         </div>
       </div>
     `;
@@ -552,27 +635,57 @@ function handleCartAction() {
   if (currentCartTab === 'order') {
     if (cart.length === 0) { showToast('Add items to your cart first!'); return; }
     switchCartTab('checkout');
-  } else if (currentCartTab === 'checkout') {
-    const name = document.getElementById('custName').value.trim();
-    const phone = document.getElementById('custPhone').value.trim();
-    const address = document.getElementById('custAddress').value.trim();
-    const city = document.getElementById('custCity').value;
-    const notes = document.getElementById('custNotes').value.trim();
-    const email = document.getElementById('custEmail').value.trim();
-    const payMethodEl = document.querySelector('input[name="payMethod"]:checked');
-    const payMethod = payMethodEl ? payMethodEl.value : '';
-    if (!name || !phone || !address) { showToast('Please fill in all required fields!'); return; }
-    localStorage.setItem('custName', name);
-    localStorage.setItem('custPhone', phone);
-    localStorage.setItem('custEmail', email);
-    localStorage.setItem('custAddress', address);
-    localStorage.setItem('custCity', city);
-    localStorage.setItem('custNotes', notes);
-    localStorage.setItem('custPayMethod', 'To be confirmed');
-    submitOrder();
-  } else if (currentCartTab === 'confirm') {
-    submitOrder();
+    return;
   }
+
+  if (currentCartTab !== 'checkout' && currentCartTab !== 'confirm') return;
+  if (storefrontData.siteSettings.websiteStatus !== 'open') {
+    showToast('The store is not accepting orders right now.');
+    return;
+  }
+  if (storefrontData.deliverySettings.deliveryAvailable === false) {
+    showToast('Delivery is currently unavailable.');
+    return;
+  }
+
+  if (currentCartTab === 'checkout') {
+    const emailField = document.getElementById('custEmail');
+    const email = emailField.value.trim();
+    if (email && !emailField.checkValidity()) {
+      showToast('Enter a valid email address or leave it blank.');
+      emailField.focus();
+      return;
+    }
+    currentCheckout = {
+      name: document.getElementById('custName').value.trim(),
+      phone: document.getElementById('custPhone').value.trim(),
+      email,
+      address: document.getElementById('custAddress').value.trim(),
+      city: document.getElementById('custCity').value,
+      notes: document.getElementById('custNotes').value.trim(),
+    };
+  }
+
+  if (!currentCheckout.name || !currentCheckout.phone || !currentCheckout.address || !currentCheckout.city) {
+    showToast('Please fill in your name, phone, address, and delivery area.');
+    return;
+  }
+  const area = getDeliveryArea(currentCheckout.city);
+  if (!area || area.available === false) {
+    showToast('Choose a delivery area that is currently available.');
+    return;
+  }
+  if (storefrontData.initialized && storefrontData.deliveryAreas.length === 0) {
+    showToast('Delivery areas are not configured right now.');
+    return;
+  }
+  const minimumOrder = Number(area.minimumOrder ?? storefrontData.deliverySettings.minimumOrder ?? 0);
+  if (getCartTotal() < minimumOrder) {
+    showToast(`The minimum order for this area is ${formatPrice(minimumOrder)}.`);
+    return;
+  }
+
+  void submitOrder();
 }
 
 // ============================================================
@@ -589,31 +702,40 @@ const SHOP_NUMBER_TELECEL = '0509511619'; // Telecel Cash
 //  ORDER SUBMISSION
 // ============================================================
 async function submitOrder() {
-  const name = localStorage.getItem('custName') || '';
-  const phone = localStorage.getItem('custPhone') || '';
-  const email = localStorage.getItem('custEmail') || phone + '@chopgh.com';
-  const delivery = getCartTotal() >= 100 ? 0 : 5;
-  const total = getCartTotal() + delivery;
-  const orderId = 'CHOP-' + Date.now().toString().slice(-6);
-  const address = localStorage.getItem('custAddress') || '';
-  const city = localStorage.getItem('custCity') || 'Elmina';
-  const notes = localStorage.getItem('custNotes') || '';
-  const itemsList = cart.map(i => `${i.name} x${i.qty} - GH₵${(i.price * i.qty).toFixed(2)}`).join('\n');
-  showGlobalLoading('Sending your order...');
+  if (orderSubmitting) return;
+  orderSubmitting = true;
+  showGlobalLoading('Saving your order...');
   try {
-    sendSMSNotification(orderId, total, name, phone, email, address, city, notes, itemsList);
-    localStorage.setItem('lastOrderId', orderId);
-    localStorage.setItem('lastOrderTotal', total);
+    const response = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customerName: currentCheckout.name,
+        phone: currentCheckout.phone,
+        email: currentCheckout.email,
+        address: currentCheckout.address,
+        city: currentCheckout.city,
+        notes: currentCheckout.notes,
+        items: cart.map(item => ({ id: String(item.id), quantity: item.qty }))
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Unable to place the order. Please try again.');
+
+    const itemsList = result.items.map(item => `${item.name} ×${item.quantity} — ${formatPrice(item.price * item.quantity)}`).join('\n');
+    sendSMSNotification(result.reference, result.total, currentCheckout.name, currentCheckout.phone, currentCheckout.email, currentCheckout.address, currentCheckout.city, currentCheckout.notes, result.deliveryFee, itemsList);
     hideGlobalLoading();
-    showReceipt(orderId, total, name, phone, email, address, city, notes, 'To be confirmed');
+    showReceipt(result, currentCheckout);
   } catch (error) {
     hideGlobalLoading();
-    showToast(error.message || 'Unable to send your order. Please try again.');
+    showToast(error instanceof Error ? error.message : 'Unable to place the order. Please try again.');
+  } finally {
+    orderSubmitting = false;
   }
 }
 
-function sendSMSNotification(orderId, total, name, phone, email, address, city, notes, itemsList) {
-  const smsBody = `CHOP ORDER #${orderId}\nCustomer: ${name}\nPhone: ${phone}\nEmail: ${email || 'Not provided'}\nAddress: ${address}, ${city}\nItems:\n${itemsList}\nDelivery: ${getCartTotal() >= 100 ? 'FREE' : 'GH₵5.00'}\nTotal: GH₵${total.toFixed(2)}\nNotes: ${notes || 'None'}\nPayment: To be confirmed`;
+function sendSMSNotification(orderId, total, name, phone, email, address, city, notes, deliveryFee, itemsList) {
+  const smsBody = `CHOP ORDER #${orderId}\nCustomer: ${name}\nPhone: ${phone}\nEmail: ${email || 'Not provided'}\nAddress: ${address}, ${city}\nItems:\n${itemsList}\nDelivery: ${deliveryFee === 0 ? 'FREE' : formatPrice(deliveryFee)}\nTotal: ${formatPrice(total)}\nNotes: ${notes || 'None'}\nPayment: To be confirmed`;
   window.open(`sms:${SHOP_NUMBER_MTN}?body=${encodeURIComponent(smsBody)}`, '_blank');
 }
 
@@ -664,7 +786,7 @@ function showReceipt(orderId, total, name, phone, email, address, city, notes, p
 }
 
 function selectPayMethod(method) {
-  localStorage.setItem('custPayMethod', method);
+  currentCheckout.payMethod = method;
   const mtnLabel = document.getElementById('mtnLabel');
   const telcelLabel = document.getElementById('telcelLabel');
   const mtnCheck = document.getElementById('mtnCheck');
@@ -691,10 +813,9 @@ function selectPayMethod(method) {
 function closeReceipt() {
   document.getElementById('receiptModal').classList.remove('show');
   cart = [];
+  currentCheckout = { name: '', phone: '', email: '', address: '', city: 'Elmina', notes: '' };
   updateCart();
   buildMenuGrid();
-  // Clear stored customer data for fresh next order
-  ['custName','custPhone','custEmail','custAddress','custCity','custNotes','custPayMethod'].forEach(k => localStorage.removeItem(k));
 }
 
 // ============================================================

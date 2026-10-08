@@ -182,7 +182,10 @@ export async function getPublishedStorefrontContent() {
       .map((row) => [row.contentKey, objectValue(row.publishedData)]),
   );
   const categoryItems = categoryRows.map((row) => ({ id: row.id, slug: row.slug, ...objectValue(row.publishedData), sortOrder: row.sortOrder }));
-  const categoryNames = new Map(categoryItems.map((item) => [item.slug, String(item.name ?? item.slug)]));
+  const categoryNames = new Map(categoryRows.map((row) => {
+    const data = objectValue(row.publishedData);
+    return [row.slug, String(data.name ?? row.slug)] as const;
+  }));
   const products = productRows.map((row) => {
     const data = objectValue(row.publishedData);
     const category = String(data.category ?? "");
@@ -191,17 +194,19 @@ export async function getPublishedStorefrontContent() {
       id: row.contentKey.slice("product:".length),
       categoryName: categoryNames.get(category) ?? category,
     };
+  }).sort((left, right) => Number((left as CmsJson).sortOrder ?? 0) - Number((right as CmsJson).sortOrder ?? 0));
+  const promotionsData = promotions.flatMap((row) => {
+    const data = objectValue(row.publishedData);
+    return isInsideSchedule(data.startDate, data.endDate) ? [{ id: row.id, ...data }] : [];
   });
-  const promotionsData = promotions
-    .map((row) => ({ id: row.id, ...objectValue(row.publishedData) }))
-    .filter((item) => isInsideSchedule(item.startDate, item.endDate));
-  const announcementsData = announcements
-    .map((row) => ({ id: row.id, ...objectValue(row.publishedData) }))
-    .filter((item) => isInsideSchedule(item.startDate, item.endDate));
+  const announcementsData = announcements.flatMap((row) => {
+    const data = objectValue(row.publishedData);
+    return isInsideSchedule(data.startDate, data.endDate) ? [{ id: row.id, ...data }] : [];
+  });
   const deliveryAreas = areas.map((row) => ({ id: row.id, ...objectValue(row.publishedData), sortOrder: row.sortOrder }));
   const navigationItems = navigation
-    .map((row) => ({ id: row.id, ...objectValue(row.publishedData), sortOrder: row.sortOrder }))
-    .filter((item) => item.visible !== false);
+    .filter((row) => objectValue(row.publishedData).visible !== false)
+    .map((row) => ({ id: row.id, ...objectValue(row.publishedData), sortOrder: row.sortOrder }));
 
   return {
     initialized: true,
@@ -231,22 +236,72 @@ function isInsideSchedule(startDate: unknown, endDate: unknown) {
   return true;
 }
 
-export async function getStorefrontProductData() {
-  const site = await getPublishedStorefrontContent();
-  if (!site.initialized) {
-    const { seedProducts } = await import("@/lib/cms/seed");
-    return { initialized: false, products: seedProducts, deliverySettings: {}, deliveryAreas: [] };
-  }
+export async function getPublicStorefrontContent() {
+  const published = await getPublishedStorefrontContent();
+  if (published.initialized) return published;
+
+  const {
+    seedCategories,
+    seedContent,
+    seedDeliveryAreas,
+    seedNavigation,
+    seedProducts,
+    seedPromotions,
+    seedPromoMessages,
+  } = await import("@/lib/cms/seed");
+  const categoryNames = new Map<string, string>(seedCategories.map((category) => [category.slug, category.name]));
+
   return {
-    initialized: true,
+    initialized: false,
+    products: seedProducts.map((product) => ({
+      ...product,
+      categoryName: categoryNames.get(product.category) ?? product.category,
+    })),
+    categories: seedCategories.map((category, index) => ({
+      id: `seed-${category.slug}`,
+      ...category,
+      sortOrder: (index + 1) * 10,
+    })),
+    promotions: seedPromotions.map((promotion, index) => ({
+      id: promotion.slug,
+      ...promotion,
+      original: promotion.originalPrice,
+      ctaHref: "#menu",
+      sortOrder: (index + 1) * 10,
+    })),
+    announcements: [],
+    deliveryAreas: seedDeliveryAreas.map((area, index) => ({
+      id: `seed-area-${index + 1}`,
+      ...area,
+      sortOrder: (index + 1) * 10,
+    })),
+    navigation: seedNavigation.map((item, index) => ({
+      id: `seed-navigation-${index + 1}`,
+      ...item,
+      sortOrder: (index + 1) * 10,
+    })),
+    siteSettings: seedContent["site-settings"],
+    homepage: seedContent.homepage,
+    about: seedContent.about,
+    deliverySettings: seedContent["delivery-settings"],
+    footerSettings: seedContent["footer-settings"],
+    promoMessages: seedPromoMessages,
+  };
+}
+
+export async function getStorefrontProductData() {
+  const site = await getPublicStorefrontContent();
+  return {
+    initialized: site.initialized,
     products: site.products as Array<Record<string, unknown>>,
     deliverySettings: site.deliverySettings as CmsJson,
     deliveryAreas: site.deliveryAreas as Array<Record<string, unknown>>,
+    siteSettings: site.siteSettings as CmsJson,
   };
 }
 
 export async function getDashboardOverview() {
-  const [{ total: products }, { total: available }, { total: featured }, { total: categories }, { total: orders }, { total: messages }, recent, marker] = await Promise.all([
+  const [[{ total: products }], [{ total: available }], [{ total: featured }], [{ total: categories }], [{ total: orders }], [{ total: messages }], recent, marker] = await Promise.all([
     db.select({ total: count() }).from(cmsContent).where(and(like(cmsContent.contentKey, "product:%"), ne(cmsContent.status, "hidden"))),
     db.select({ total: count() }).from(cmsContent).where(and(like(cmsContent.contentKey, "product:%"), eq(sql<string>`${cmsContent.draftData} ->> 'available'`, "true"), ne(cmsContent.status, "hidden"))),
     db.select({ total: count() }).from(cmsContent).where(and(like(cmsContent.contentKey, "product:%"), eq(sql<string>`${cmsContent.draftData} ->> 'featured'`, "true"), ne(cmsContent.status, "hidden"))),
