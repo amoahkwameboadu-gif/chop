@@ -1159,14 +1159,45 @@ function closeDrawer() {
 }
 
 // ============================================================
-//  TOAST
+//  TOAST — single queued notification, dismissible, never blocks ordering
 // ============================================================
-function showToast(msg) {
+const toastQueue = [];
+let toastActive = false;
+let toastTimer = null;
+
+function showToast(msg, type = 'success') {
   const toast = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
+  const msgEl = document.getElementById('toastMsg');
+  const icon = document.getElementById('toastIcon');
+  if (!toast || !msgEl) return;
+  // Queue instead of stacking: a second call while one is visible waits its turn
+  if (toastActive) { toastQueue.push({ msg, type }); return; }
+  msgEl.textContent = msg;
+  if (icon) {
+    icon.className = 'fas toast-icon ' + (type === 'error' ? 'fa-exclamation-triangle' : type === 'warning' ? 'fa-exclamation-circle' : 'fa-check-circle');
+    icon.style.color = type === 'error' ? 'var(--red)' : type === 'warning' ? 'var(--amber)' : '';
+  }
+  toast.dataset.type = type;
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
+  toastActive = true;
+  toastTimer = setTimeout(() => dismissToast(), type === 'error' ? 6000 : 3200);
 }
+
+function dismissToast() {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.classList.remove('show');
+  toastActive = false;
+  clearTimeout(toastTimer);
+  if (toastQueue.length) showToast(toastQueue.shift().msg, toastQueue.length ? toastQueue[0].type : 'success');
+}
+
+document.getElementById('toastClose')?.addEventListener('click', dismissToast);
+// Tap outside the notification also dismisses it (common on mobile)
+document.getElementById('toast')?.addEventListener('click', event => {
+  if (event.target.closest('.toast-close')) return;
+  dismissToast();
+});
 
 // ============================================================
 //  NAVBAR SCROLL
