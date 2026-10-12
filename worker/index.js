@@ -728,30 +728,46 @@ function buildChatSystemPrompt(site) {
 }
 
 async function requestChatCompletion(env, messages) {
+  let lastError = null;
   if (env.AI) {
-    const model = env.AI_MODEL || "@cf/meta/llama-3.1-8b-instruct";
-    const result = await env.AI.run(model, { messages, max_tokens: 512, temperature: 0.4 });
-    const text = result?.response ?? result?.result ?? "";
-    if (!text) throw new HttpError("The assistant returned an empty response. Please try again.", 502);
-    return String(text);
+    // llama-3.1-8b-instruct was deprecated on 2026-05-30; the fp8 build is the supported replacement.
+    const model = env.AI_MODEL || "@cf/meta/llama-3.1-8b-instruct-fp8";
+    try {
+      const result = await env.AI.run(model, { messages, max_tokens: 512, temperature: 0.4 });
+      const text = result?.response ?? result?.result ?? "";
+      if (!text) throw new HttpError("The assistant returned an empty response. Please try again.", 502);
+      return String(text);
+    } catch (error) {
+      lastError = error;
+      console.error("CHOP Workers AI completion failed.", error);
+      if (!env.CHAT_API_URL || !env.CHAT_API_KEY) {
+        throw error instanceof HttpError ? error : new HttpError("The assistant could not respond right now. Please try again in a moment.", 502);
+      }
+    }
   }
   if (env.CHAT_API_URL && env.CHAT_API_KEY) {
-    const upstream = await fetch(env.CHAT_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.CHAT_API_KEY}` },
-      body: JSON.stringify({
-        model: env.CHAT_MODEL || "gpt-4o-mini",
-        messages,
-        max_tokens: 512,
-        temperature: 0.4
-      })
-    });
-    if (!upstream.ok) throw new HttpError("The assistant is temporarily unavailable. Please try again shortly.", 502);
-    const payload = await upstream.json().catch(() => null);
-    const text = payload?.choices?.[0]?.message?.content;
-    if (!text) throw new HttpError("The assistant returned an empty response. Please try again.", 502);
-    return String(text);
+    try {
+      const upstream = await fetch(env.CHAT_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.CHAT_API_KEY}` },
+        body: JSON.stringify({
+          model: env.CHAT_MODEL || "gpt-4o-mini",
+          messages,
+          max_tokens: 512,
+          temperature: 0.4
+        })
+      });
+      if (!upstream.ok) throw new HttpError("The assistant is temporarily unavailable. Please try again shortly.", 502);
+      const payload = await upstream.json().catch(() => null);
+      const text = payload?.choices?.[0]?.message?.content;
+      if (!text) throw new HttpError("The assistant returned an empty response. Please try again.", 502);
+      return String(text);
+    } catch (error) {
+      if (error instanceof HttpError) throw error;
+      throw new HttpError("The assistant could not respond right now. Please try again in a moment.", 502);
+    }
   }
+  if (lastError) throw lastError instanceof HttpError ? lastError : new HttpError("The assistant could not respond right now. Please try again in a moment.", 502);
   throw new HttpError("The Chop assistant is not connected yet. Please call or WhatsApp the Chop team using the Contact page and they will help you right away.", 503);
 }
 

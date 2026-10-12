@@ -97,8 +97,9 @@ information for business facts and to escalate unknowns instead of guessing.
 Provider configuration, in priority order:
 
 1. **Workers AI** (default): the `[ai]` binding in `wrangler.toml`, model
-   `@cf/meta/llama-3.1-8b-instruct`. Set an `AI_MODEL` Worker variable to use
-   a different model.
+   `@cf/meta/llama-3.1-8b-instruct-fp8`. Set an `AI_MODEL` Worker variable to use
+   a different model. If the AI call fails, the assistant falls back to the
+   OpenAI-compatible API when configured, otherwise it shows a friendly error.
 2. **Any OpenAI-compatible API**: set the `CHAT_API_URL` and `CHAT_API_KEY`
    secrets (optionally `CHAT_MODEL`). No frontend key is ever exposed.
 
