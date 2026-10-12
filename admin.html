@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#270404" />
+  <title>CHOP Admin</title>
+  <link rel="icon" href="/chop.png" />
+  <link rel="stylesheet" href="/admin.css" />
+  <script src="/admin.js" defer></script>
+</head>
+<body>
+  <main id="authView" class="auth-shell">
+    <form id="authForm" class="auth-card">
+      <a class="brand" href="/" aria-label="CHOP home"><img src="/chop.png" alt="" /> CHOP<span>.</span></a>
+      <p class="eyebrow">ADMIN PORTAL</p>
+      <h1 id="authTitle">Welcome back</h1>
+      <p id="authDescription" class="muted">Sign in to manage the Chop website.</p>
+      <div id="setupNotice" class="notice" hidden>First-time setup: choose your administrator email and a strong password.</div>
+      <label id="setupTokenGroup" class="field" hidden>
+        One-time setup token
+        <input id="setupToken" name="setupToken" type="password" autocomplete="off" />
+      </label>
+      <label class="field">
+        Email address
+        <input id="authEmail" name="email" type="email" autocomplete="username" required maxlength="254" />
+      </label>
+      <label class="field">
+        Password
+        <input id="authPassword" name="password" type="password" autocomplete="current-password" required minlength="12" maxlength="256" />
+      </label>
+      <button id="authSubmit" class="button primary full" type="submit">Sign in</button>
+      <p id="authMessage" class="form-message" role="status" aria-live="polite"></p>
+      <a class="back-link" href="/">← Return to the Chop website</a>
+    </form>
+  </main>
+
+  <div id="appView" class="app-shell" hidden>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="/" aria-label="CHOP home"><img src="/chop.png" alt="" /> CHOP<span>.</span></a>
+      <p class="sidebar-caption">CONTENT MANAGEMENT</p>
+      <nav class="side-nav" id="sideNav" aria-label="Admin sections">
+        <button data-page="dashboard" class="active"><span>▦</span> Dashboard</button>
+        <button data-page="products"><span>▣</span> Products</button>
+        <button data-page="categories"><span>◫</span> Categories</button>
+        <button data-page="deals"><span>◇</span> Promotions</button>
+        <button data-page="announcements"><span>◉</span> Announcements</button>
+        <button data-page="content"><span>✎</span> Website content</button>
+        <button data-page="delivery"><span>⌖</span> Delivery areas</button>
+        <button data-page="navigation"><span>☰</span> Navigation</button>
+        <button data-page="media"><span>▧</span> Media library</button>
+        <button data-page="activity"><span>◷</span> Activity log</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <a href="/" target="_blank" rel="noopener">View live website ↗</a>
+        <button id="logoutButton" class="logout-button">↪ Sign out</button>
+      </div>
+    </aside>
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+    <section class="workspace">
+      <header class="topbar">
+        <button id="menuButton" class="icon-button menu-button" aria-label="Open navigation">☰</button>
+        <div>
+          <p class="eyebrow">CHOP ADMIN</p>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="topbar-account">
+          <span class="status-dot"></span>
+          <span id="adminEmail"></span>
+        </div>
+      </header>
+      <main id="pageContent" class="page-content" tabindex="-1"></main>
+    </section>
+  </div>
+
+  <dialog id="editorDialog" class="editor-dialog">
+    <form id="editorForm" method="dialog">
+      <div class="dialog-heading">
+        <div><p class="eyebrow">CHOP CONTENT</p><h2 id="editorTitle">Edit item</h2></div>
+        <button id="closeEditor" class="icon-button" type="button" aria-label="Close">×</button>
+      </div>
+      <div id="editorFields" class="form-grid"></div>
+      <p id="editorMessage" class="form-message" role="status"></p>
+      <div class="dialog-actions">
+        <button id="cancelEditor" class="button secondary" type="button">Cancel</button>
+        <button id="saveEditor" class="button primary" type="submit">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

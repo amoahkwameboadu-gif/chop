@@ -1,9 +1,23 @@
 name = "chop"
-compatibility_date = "2026-08-20"
-pages_build_output_dir = "./pages"
+main = "worker/index.js"
+compatibility_date = "2026-10-07"
+account_id = "92915384fdf95a58e7b3b34f911701f8"
+workers_dev = true
 
-[vars]
-PUBLIC_SITE_URL = "https://chop.pages.dev"
+[assets]
+directory = "."
+binding = "ASSETS"
+html_handling = "none"
+run_worker_first = ["/api/*", "/admin", "/admin/*", "/admin.html", "/media/*"]
 
-# Set secret with:
-# npx wrangler pages secret put PAYSTACK_SECRET_KEY
+[[d1_databases]]
+binding = "DB"
+database_name = "chop-db"
+database_id = "77ef0be0-8020-4154-806b-f782601be056"
+migrations_dir = "migrations"
+
+# Powers the Chop assistant chatbot (server-side only). Optional alternative:
+# set CHAT_API_URL + CHAT_API_KEY (and optionally CHAT_MODEL) as Worker secrets
+# to use any OpenAI-compatible chat API instead. AI_MODEL overrides the model.
+[ai]
+binding = "AI"

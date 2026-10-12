@@ -1,0 +1,13 @@
+/.git/
+/.vscode/
+/.wrangler/
+/.kilo/
+/migrations/
+/worker/
+/node_modules/
+ /.env*
+ /.dev.vars
+ /wrangler.toml
+/README.md
+/food images/*.mhtml
+/food images/download.htm
